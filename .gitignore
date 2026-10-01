@@ -1,0 +1,11 @@
+# Python 缓存
+__pycache__/
+
+# PyInstaller 构建产物
+build/
+dist/
+*.spec
+
+# 构建日志
+build_out.txt
+build_err.txt
