@@ -406,3 +406,140 @@ body {
 #stage.paint-mode .el .wuis-input,
 #stage.paint-mode .el .wuis-select { cursor: text; }
 #stage.paint-mode .el .wuis-slider { cursor: ew-resize; }
+
+/* ============ 新组件样式 ============ */
+/* 标签页 */
+.wuis-tabs { width: 100%; height: 100%; display: flex; flex-direction: column; background: #fff; border: 1px solid #d6dbe3; border-radius: 8px; overflow: hidden; font-family: var(--font); }
+.wuis-tabs .wt-head { display: flex; border-bottom: 1px solid #d6dbe3; background: #f7f9fb; flex-shrink: 0; overflow-x: auto; }
+.wuis-tabs .wt-tab { padding: 8px 14px; font-size: 12.5px; color: #666; cursor: pointer; border-bottom: 2px solid transparent; white-space: nowrap; }
+.wuis-tabs .wt-tab.on { color: #1f6bff; border-bottom-color: #1f6bff; background: rgba(31,107,255,.05); font-weight: 600; }
+.wuis-tabs .wt-body { flex: 1; padding: 12px 14px; font-size: 13px; color: #333; overflow: hidden; }
+
+/* 卡片 */
+.wuis-card { width: 100%; height: 100%; background: #fff; border: 1px solid #d6dbe3; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,.06); overflow: hidden; display: flex; flex-direction: column; font-family: var(--font); }
+.wuis-card .wc-title { padding: 11px 14px; font-size: 14px; font-weight: 600; color: #222; border-bottom: 1px solid #eef1f5; background: #fafbfc; flex-shrink: 0; }
+.wuis-card .wc-body { flex: 1; padding: 12px 14px; font-size: 13px; color: #444; line-height: 1.6; overflow: hidden; }
+
+/* 图表 */
+.wuis-chart { width: 100%; height: 100%; background: #fff; border: 1px solid #e4e8ee; border-radius: 8px; overflow: hidden; display: flex; }
+.wuis-chart svg { width: 100%; height: 100%; display: block; }
+
+/* 表格 */
+.wuis-table { width: 100%; height: 100%; overflow: auto; background: #fff; border: 1px solid #dfe4ea; border-radius: 8px; font-family: var(--font); }
+.wuis-table table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+.wuis-table th { background: #f4f6f9; color: #333; font-weight: 600; padding: 8px 10px; border-bottom: 1px solid #dfe4ea; text-align: left; white-space: nowrap; }
+.wuis-table td { padding: 7px 10px; border-bottom: 1px solid #eef1f5; color: #444; }
+.wuis-table tr:last-child td { border-bottom: none; }
+.wuis-table tr:hover td { background: #f8fafc; }
+
+/* 视频 */
+.wuis-video { width: 100%; height: 100%; background: #0e0f11; border-radius: 8px; overflow: hidden; display: flex; align-items: center; justify-content: center; color: #8a8f98; font-family: var(--font); }
+.wuis-video video { width: 100%; height: 100%; object-fit: cover; display: block; background: #000; }
+.wuis-video .vd-ph { text-align: center; font-size: 11.5px; line-height: 1.9; }
+.wuis-video .vd-ph b { color: #c2c7cf; display: block; font-size: 13px; }
+
+/* 日期选择 */
+.wuis-date { width: 100%; height: 100%; border: 1px solid #c4c9d0; border-radius: 6px; padding: 0 11px; font-size: 13px; font-family: var(--font); color: #222; background: #fff; outline: none; }
+.wuis-date:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(63,140,255,.2); }
+
+/* 弹窗 */
+.wuis-modal { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+.wuis-modal .wm-btn { padding: 9px 22px; background: #2f5cff; color: #fff; border: none; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer; font-family: var(--font); }
+.wuis-modal .wm-btn:hover { filter: brightness(1.06); }
+.wuis-modal-pop { position: fixed; inset: 0; background: rgba(0,0,0,.42); z-index: 9999; display: none; align-items: center; justify-content: center; font-family: var(--font); }
+.wuis-modal-pop.open { display: flex; }
+.wuis-modal-pop .wmp-box { background: #fff; border-radius: 10px; width: min(420px, 90vw); box-shadow: 0 24px 60px rgba(0,0,0,.35); overflow: hidden; }
+.wuis-modal-pop .wmp-title { padding: 13px 18px; font-size: 14px; font-weight: 600; color: #222; border-bottom: 1px solid #eef1f5; }
+.wuis-modal-pop .wmp-body { padding: 16px 18px; font-size: 13px; color: #444; line-height: 1.7; }
+.wuis-modal-pop .wmp-foot { padding: 10px 18px 14px; text-align: right; }
+.wuis-modal-pop .wmp-close { padding: 7px 20px; background: #f1f3f6; color: #333; border: none; border-radius: 6px; font-size: 12.5px; cursor: pointer; }
+.wuis-modal-pop .wmp-close:hover { background: #e5e8ee; }
+
+/* 画布内预览：图表 / 表格 / 弹窗（设计器渲染专用） */
+.wuis-chart .chart-bars { flex: 1; display: flex; align-items: flex-end; gap: 8px; padding: 12px 14px; }
+.wuis-chart .chart-col { flex: 1; min-width: 8px; border-radius: 4px 4px 0 0; background: #2f5cff; }
+.wuis-table .td-strong { font-weight: 600; color: #222; }
+.wuis-modal .modal-mask { position: fixed; inset: 0; background: rgba(0,0,0,.42); z-index: 9999; align-items: center; justify-content: center; }
+.wuis-modal .modal-box { background: #fff; border-radius: 10px; width: min(380px, 86vw); box-shadow: 0 24px 60px rgba(0,0,0,.35); overflow: hidden; padding: 16px 18px; display: flex; flex-direction: column; gap: 10px; font-family: var(--font); }
+.wuis-modal .modal-box b { font-size: 14px; color: #222; }
+.wuis-modal .modal-box span { font-size: 13px; color: #444; line-height: 1.7; }
+.wuis-modal .modal-close { align-self: flex-end; padding: 6px 18px; background: #f1f3f6; color: #333; border: none; border-radius: 6px; font-size: 12.5px; cursor: pointer; }
+.wuis-modal .modal-close:hover { background: #e5e8ee; }
+
+/* 图标前缀 */
+.wuis-ic { display: inline-flex; align-items: center; justify-content: center; margin-right: 6px; flex-shrink: 0; }
+.wuis-ic svg { width: 1.05em; height: 1.05em; fill: currentColor; display: block; }
+
+/* ============ 多选与组合 ============ */
+.el.selected.multi { outline: 1px dashed #7fb2ff; }
+.el.grouped { outline: 1px dashed rgba(255,190,80,.55); outline-offset: 1px; }
+.el.grouped::before {
+  content: "组"; position: absolute; top: -15px; left: 0; font-size: 9px; color: #c99a3a;
+  background: #2a2d31; padding: 0 4px; border: 1px solid rgba(255,190,80,.4); border-radius: 3px;
+  line-height: 13px; z-index: 5;
+}
+.el.locked { cursor: default !important; }
+.el.locked .h { display: none !important; }
+
+/* ============ 页面面板 ============ */
+#page-tools { padding: 2px 12px 8px; display: flex; }
+#page-tools .btn-mini { flex: 1; height: 26px; background: var(--accent-soft); color: #8ab0ff; border: 1px solid transparent; border-radius: 4px; font-size: 11.5px; cursor: pointer; }
+#page-tools .btn-mini:hover { background: rgba(63,140,255,.25); }
+#page-list { flex: 1; overflow-y: auto; padding: 2px 6px 8px; }
+.page-item { display: flex; align-items: center; gap: 7px; padding: 6px 8px; margin-bottom: 2px; border-radius: 4px; cursor: pointer; font-size: 12px; position: relative; }
+.page-item:hover { background: var(--panel-3); }
+.page-item.sel { background: var(--accent-soft); }
+.page-item.sel::before { content: ""; position: absolute; left: 0; top: 5px; bottom: 5px; width: 2px; background: var(--accent); border-radius: 1px; }
+.page-item .pi-icon { color: var(--text-2); font-size: 13px; width: 20px; text-align: center; }
+.page-item.sel .pi-icon { color: var(--accent); }
+.page-item .pi-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text); }
+.page-item .pi-count { font-size: 10px; color: var(--text-3); font-variant-numeric: tabular-nums; }
+.page-item .pi-del { color: var(--text-3); cursor: pointer; padding: 0 3px; font-size: 12px; visibility: hidden; }
+.page-item:hover .pi-del { visibility: visible; }
+.page-item .pi-del:hover { color: var(--danger); }
+.page-item.renaming .pi-name { display: none; }
+.page-item input.pi-input { flex: 1; min-width: 0; height: 22px; padding: 0 6px; background: var(--panel-2); color: var(--text); border: 1px solid var(--accent); border-radius: 3px; font-size: 12px; outline: none; }
+
+/* ============ 对齐按钮 ============ */
+.tb.align-btn svg { width: 15px; height: 15px; }
+.tb.align-btn.active { background: var(--accent-soft); color: var(--accent); }
+
+/* ============ 主题色 / 渐变 / 阴影 / 字体 / 图标 设置控件 ============ */
+.swatches { display: flex; flex-wrap: wrap; gap: 4px; flex: 1; }
+.swatch { width: 20px; height: 20px; border-radius: 4px; cursor: pointer; border: 1px solid rgba(255,255,255,.14); transition: transform .1s, box-shadow .1s; flex-shrink: 0; }
+.swatch:hover { transform: scale(1.18); box-shadow: 0 0 0 2px var(--accent); }
+.grad-list { display: flex; flex-wrap: wrap; gap: 5px; }
+.grad-chip { width: 44px; height: 24px; border-radius: 5px; cursor: pointer; border: 1px solid rgba(255,255,255,.18); transition: transform .1s; }
+.grad-chip:hover { transform: scale(1.15); }
+.grad-chip.gn { background: linear-gradient(135deg,#667eea,#764ba2); }
+.grad-chip.gs { background: linear-gradient(135deg,#f093fb,#f5576c); }
+.grad-chip.gc { background: linear-gradient(135deg,#4facfe,#00f2fe); }
+.grad-chip.go { background: linear-gradient(135deg,#fa709a,#fee140); }
+.grad-chip.gd { background: linear-gradient(135deg,#30cfd0,#330867); }
+.grad-chip.gm { background: linear-gradient(135deg,#f6d365,#fda085); }
+.grad-chip.gg { background: linear-gradient(135deg,#11998e,#38ef7d); }
+.grad-chip.gr { background: linear-gradient(135deg,#fc4a1a,#f7b733); }
+.grad-chip.gw { background: linear-gradient(135deg,#232526,#414345); }
+.grad-chip.gp { background: linear-gradient(135deg,#fbc2eb,#a18cd1); }
+
+/* 动画关键帧（设计器预览与导出共用命名） */
+@keyframes wuis-fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes wuis-slide-up { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: none; } }
+@keyframes wuis-slide-left { from { opacity: 0; transform: translateX(36px); } to { opacity: 1; transform: none; } }
+@keyframes wuis-zoom-in { from { opacity: 0; transform: scale(.72); } to { opacity: 1; transform: none; } }
+@keyframes wuis-bounce-in { 0% { opacity: 0; transform: scale(.5); } 60% { opacity: 1; transform: scale(1.08); } 80% { transform: scale(.96); } 100% { opacity: 1; transform: none; } }
+.el[data-anim="fadeIn"] { animation: wuis-fade-in var(--anim-dur, .4s) ease both; }
+.el[data-anim="slideUp"] { animation: wuis-slide-up var(--anim-dur, .4s) ease both; }
+.el[data-anim="slideLeft"] { animation: wuis-slide-left var(--anim-dur, .4s) ease both; }
+.el[data-anim="zoomIn"] { animation: wuis-zoom-in var(--anim-dur, .4s) ease both; }
+.el[data-anim="bounceIn"] { animation: wuis-bounce-in var(--anim-dur, .5s) ease both; }
+
+/* 新增控件在移动模式下的交互屏蔽 / 画笔模式光标 */
+#stage:not(.paint-mode) .el .wuis-video video,
+#stage:not(.paint-mode) .el .wuis-date,
+#stage:not(.paint-mode) .el .wuis-tabs .wt-tab,
+#stage:not(.paint-mode) .el .wuis-table,
+#stage:not(.paint-mode) .el .wuis-modal .wm-btn { pointer-events: none; }
+#stage.paint-mode .el .wuis-date { cursor: text; }
+#stage.paint-mode .el .wuis-tabs .wt-tab,
+#stage.paint-mode .el .wuis-modal .wm-btn { cursor: pointer; }
