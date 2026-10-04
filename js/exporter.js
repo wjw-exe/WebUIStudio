@@ -608,7 +608,34 @@ if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded'
     });
     if (extraCss) extraCss += "\n";
 
-    return "<!DOCTYPE html>\n<html lang=\"zh-CN\">\n<head>\n<meta charset=\"UTF-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n<title>" + esc(state.title || "WebUI Studio 导出页面") + "</title>\n<style>\n" + EXPORT_CSS + extraCss + "</style>\n</head>\n<body>\n  " + navHtml + '\n  <div class="wuis-pages">\n' + pageHtml + "\n  </div>\n<script>\n" + RUNTIME + "\n</script>\n</body>\n</html>";
+    /* 响应式断点：桌面=基础样式；平板/手机按画布设置生成媒体查询覆盖 */
+    const bpCfg = st.bp || {};
+    const tabW = (bpCfg.tablet && bpCfg.tablet.w) || 768;
+    const tabH = (bpCfg.tablet && bpCfg.tablet.h) || 1024;
+    const mobW = (bpCfg.mobile && bpCfg.mobile.w) || 390;
+    const mobH = (bpCfg.mobile && bpCfg.mobile.h) || 844;
+    let respCss = "";
+    respCss += "\n@media (max-width:" + (tabW - 1) + "px){.wuis-page{width:" + mobW + "px;height:" + mobH + "px}}";
+    respCss += "\n@media (min-width:" + tabW + "px) and (max-width:" + (st.w - 1) + "px){.wuis-page{width:" + tabW + "px;height:" + tabH + "px}}";
+    pages.forEach(pg => {
+      (pg.elements || []).forEach(el => {
+        const b = el.bp || {};
+        const pushRule = (bpKey, media) => {
+          const rect = { x: el.x, y: el.y, w: el.w, h: el.h };
+          const o = b[bpKey];
+          if (!o) return;
+          if (o.x != null) rect.x = o.x;
+          if (o.y != null) rect.y = o.y;
+          if (o.w != null) rect.w = o.w;
+          if (o.h != null) rect.h = o.h;
+          respCss += "\n" + media + '{.el[data-el-id="' + esc(el.id) + '"]{left:' + rect.x + "px!important;top:" + rect.y + "px!important;width:" + rect.w + "px!important;height:" + rect.h + "px!important}}";
+        };
+        pushRule("tablet", "@media (min-width:" + tabW + "px) and (max-width:" + (st.w - 1) + "px)");
+        pushRule("mobile", "@media (max-width:" + (tabW - 1) + "px)");
+      });
+    });
+
+    return "<!DOCTYPE html>\n<html lang=\"zh-CN\">\n<head>\n<meta charset=\"UTF-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n<title>" + esc(state.title || "WebUI Studio 导出页面") + "</title>\n<style>\n" + EXPORT_CSS + respCss + extraCss + "</style>\n</head>\n<body>\n  " + navHtml + '\n  <div class="wuis-pages">\n' + pageHtml + "\n  </div>\n<script>\n" + RUNTIME + "\n</script>\n</body>\n</html>";
   }
 
   return { exportHTML: exportHTML };

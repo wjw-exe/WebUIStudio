@@ -14,7 +14,7 @@
     <div class="brand">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="4" stroke="#5b8cff" stroke-width="2"/><path d="M8 12h8M12 8v8" stroke="#5b8cff" stroke-width="2" stroke-linecap="round"/></svg>
       <span>WebUI Studio</span>
-      <em>v1.5</em>
+      <em>v1.6</em>
     </div>
 <div id="toolbar">
       <button class="tb tool-btn active" id="tb-tool-move" title="移动工具 V"><svg viewBox="0 0 24 24"><path d="M12 3v18M3 12h18"/><path d="m8 8 4-4 4 4M8 16l4 4 4-4"/></svg></button>
@@ -99,6 +99,24 @@
           <div class="prop">
             <label>高度</label><input type="number" id="cv-h" min="240" max="2400" step="10">
           </div>
+          <div class="prop block">
+            <label>断点尺寸</label>
+            <div class="seg" data-bpseg="1">
+              <button class="seg-btn on" data-bp="desktop">桌面</button>
+              <button class="seg-btn" data-bp="tablet">平板</button>
+              <button class="seg-btn" data-bp="mobile">手机</button>
+            </div>
+            <div class="bp-size-row">
+              <span>桌面</span><input type="number" id="bp-w-desktop" min="320" max="1920" step="10"><span>×</span><input type="number" id="bp-h-desktop" min="240" max="2400" step="10">
+            </div>
+            <div class="bp-size-row">
+              <span>平板</span><input type="number" id="bp-w-tablet" min="320" max="1920" step="10"><span>×</span><input type="number" id="bp-h-tablet" min="240" max="2400" step="10">
+            </div>
+            <div class="bp-size-row">
+              <span>手机</span><input type="number" id="bp-w-mobile" min="320" max="1920" step="10"><span>×</span><input type="number" id="bp-h-mobile" min="240" max="2400" step="10">
+            </div>
+          </div>
+          <div class="panel-tip">断点尺寸用于桌面/平板/手机三档画布预览与媒体查询导出断点宽度，拖拽移动画布设置。</div>
           <div class="prop">
             <label>背景色</label><input type="color" id="cv-bg"><input type="text" id="cv-bg-hex" class="txt">
           </div>

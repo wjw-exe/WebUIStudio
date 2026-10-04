@@ -109,9 +109,10 @@
 
   /* ---------- 状态 ---------- */
   const state = {
-    version: 2,
+    version: 3,
     title: "未命名页面",
-    stage: { w: 1280, h: 720, bg: "#ffffff", grid: true },
+    stage: { w: 1280, h: 720, bg: "#ffffff", grid: true, bp: { tablet: { w: 768, h: 1024 }, mobile: { w: 390, h: 844 } } },
+    bpView: "desktop",
     pages: [],
     pageIdx: 0,
     elements: [],
@@ -148,6 +149,46 @@
       props: DEFAULT_PROPS[type](),
       style: st
     };
+  }
+
+  /* ---------- 响应式断点 ---------- */
+  const BPS = ["desktop", "tablet", "mobile"];
+  const BP_NAMES = { desktop: "桌面", tablet: "平板", mobile: "手机" };
+  const BP_BREAK = { tabletMin: 768, tabletMax: 1023, mobileMax: 767 };
+  function curBp() { return state.bpView || "desktop"; }
+  function bpRect(el, bp) {
+    if (bp === "desktop") return { x: el.x, y: el.y, w: el.w, h: el.h };
+    const b = (el.bp && el.bp[bp]) || {};
+    return {
+      x: (b.x != null ? b.x : el.x), y: (b.y != null ? b.y : el.y),
+      w: (b.w != null ? b.w : el.w), h: (b.h != null ? b.h : el.h)
+    };
+  }
+  function posOf(el) { return bpRect(el, curBp()); }
+  function setBpRect(el, bp, r) {
+    if (bp === "desktop") { el.x = r.x; el.y = r.y; el.w = r.w; el.h = r.h; return; }
+    if (!el.bp) el.bp = {};
+    const b = el.bp[bp] = el.bp[bp] || {};
+    b.x = r.x; b.y = r.y; b.w = r.w; b.h = r.h;
+  }
+  function setPos(el, r) { setBpRect(el, curBp(), r); }
+  function stageSize() {
+    const b = curBp() === "tablet" || curBp() === "mobile" ? (state.stage.bp || {})[curBp()] : null;
+    if (b && b.w) return { w: b.w, h: b.h || Math.round(b.w * 0.75) };
+    return { w: state.stage.w, h: state.stage.h };
+  }
+  function resetBpDefaults() {
+    state.stage.bp = { tablet: { w: 768, h: 1024 }, mobile: { w: 390, h: 844 } };
+  }
+  function bpSize(b) {
+    if (b === "desktop") return { w: state.stage.w, h: state.stage.h };
+    const bp = (state.stage.bp || {})[b];
+    return bp ? { w: bp.w, h: bp.h } : (b === "tablet" ? { w: 768, h: 1024 } : { w: 390, h: 844 });
+  }
+  function setBpSize(b, w, h) {
+    if (b === "desktop") { state.stage.w = w; state.stage.h = h; return; }
+    if (!state.stage.bp) state.stage.bp = {};
+    state.stage.bp[b] = { w: w, h: h };
   }
 
   /* ---------- 历史 ---------- */
@@ -198,8 +239,9 @@
 
   function renderStage() {
     const st = stageEl();
-    st.style.width = state.stage.w + "px";
-    st.style.height = state.stage.h + "px";
+    const ss = stageSize();
+    st.style.width = ss.w + "px";
+    st.style.height = ss.h + "px";
     st.style.background = state.stage.bg;
     st.classList.toggle("grid-on", state.stage.grid);
     const eh = $("#empty-hint");
@@ -256,10 +298,11 @@
   }
 
   function applyElStyle(d, el) {
-    d.style.left = el.x + "px";
-    d.style.top = el.y + "px";
-    d.style.width = el.w + "px";
-    d.style.height = el.h + "px";
+    const r = posOf(el);
+    d.style.left = r.x + "px";
+    d.style.top = r.y + "px";
+    d.style.width = r.w + "px";
+    d.style.height = r.h + "px";
     d.style.opacity = el.style.opacity;
     d.style.zIndex = el.style.z;
     d.style.transform = "rotate(" + el.style.rotate + "deg)";
@@ -688,9 +731,10 @@
     if (e.button !== 0) return;
     e.preventDefault();
     const rect = stageEl().getBoundingClientRect();
+    const r = posOf(el);
     dragState = {
       mode: "move", el, startX: e.clientX, startY: e.clientY,
-      ox: el.x, oy: el.y, stageRect: rect, moved: false
+      ox: r.x, oy: r.y, stageRect: rect, moved: false
     };
     window.addEventListener("mousemove", onDragMove);
     window.addEventListener("mouseup", onDragEnd);
@@ -698,9 +742,10 @@
 
   function startResize(e, d, el, dir) {
     const rect = stageEl().getBoundingClientRect();
+    const r = posOf(el);
     dragState = {
       mode: "resize", el, dir, startX: e.clientX, startY: e.clientY,
-      ox: el.x, oy: el.y, ow: el.w, oh: el.h, stageRect: rect
+      ox: r.x, oy: r.y, ow: r.w, oh: r.h, stageRect: rect
     };
     window.addEventListener("mousemove", onDragMove);
     window.addEventListener("mouseup", onDragEnd);
@@ -718,7 +763,8 @@
       let nx = ds.ox + dx, ny = ds.oy + dy;
       if (snap) { nx = Math.round(nx / 4) * 4; ny = Math.round(ny / 4) * 4; }
       nx = Math.round(nx); ny = Math.round(ny);
-      ds.el.x = nx; ds.el.y = ny;
+      const r = posOf(ds.el);
+      setPos(ds.el, { x: nx, y: ny, w: r.w, h: r.h });
       if (d) { d.style.left = nx + "px"; d.style.top = ny + "px"; }
     } else {
       const dir = ds.dir;
@@ -730,7 +776,7 @@
       if (w < 12) { x -= 12 - w; w = 12; }
       if (h < 12) { y -= 12 - h; h = 12; }
       w = Math.round(w); h = Math.round(h); x = Math.round(x); y = Math.round(y);
-      ds.el.x = x; ds.el.y = y; ds.el.w = w; ds.el.h = h;
+      setPos(ds.el, { x, y, w, h });
       if (d) { d.style.left = x + "px"; d.style.top = y + "px"; d.style.width = w + "px"; d.style.height = h + "px"; }
     }
     syncInspectorNumbers();
@@ -803,8 +849,13 @@
     h += '<div class="prop"><label>名称</label><input type="text" data-c="name" placeholder="自定义名称，显示在图层列表"></div>';
 
     h += '<div class="ip-group"><div class="ip-title foldable">位置与尺寸</div>';
-    h += numRow("X", "x", el.x, 0, 9999) + numRow("Y", "y", el.y, 0, 9999);
-    h += numRow("宽度", "w", el.w, 12, 9999) + numRow("高度", "h", el.h, 12, 9999);
+    h += '<div class="prop"><label>断点</label><div class="seg" data-bpseg="1">'
+      + BPS.map(b => '<button class="seg-btn' + (curBp() === b ? " on" : "") + '" data-bp="' + b + '">' + BP_NAMES[b] + '</button>').join("")
+      + '</div></div>';
+    h += '<div class="prop"><label>X</label><input type="number" data-bp="x" min="0" max="9999"></div>';
+    h += '<div class="prop"><label>Y</label><input type="number" data-bp="y" min="0" max="9999"></div>';
+    h += '<div class="prop"><label>宽度</label><input type="number" data-bp="w" min="12" max="9999"></div>';
+    h += '<div class="prop"><label>高度</label><input type="number" data-bp="h" min="12" max="9999"></div>';
     h += '<div class="prop"><label></label><div class="btn-row">'
       + '<button class="btn-mini primary" data-icmd="top">置于顶层</button>'
       + '<button class="btn-mini primary" data-icmd="bottom">置于底层</button></div></div>';
@@ -1092,6 +1143,30 @@
         t.parentElement.classList.toggle("folded");
       });
     });
+    ip.querySelectorAll("[data-bpseg] .seg-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        state.bpView = btn.dataset.bp;
+        renderStage();
+        refreshSelection();
+        renderInspector();
+        renderLayers();
+        updateSelInfo();
+        updateCoord();
+      });
+    });
+    ip.querySelectorAll("input[type=number][data-bp]").forEach(inp => {
+      inp.addEventListener("change", () => {
+        const v = clamp(parseFloat(inp.value) || 0, parseFloat(inp.min || -1e9), parseFloat(inp.max || 1e9));
+        const r = posOf(el);
+        const next = { x: r.x, y: r.y, w: r.w, h: r.h };
+        next[inp.dataset.bp] = v;
+        setPos(el, next);
+        renderStage();
+        renderElementOnly(el);
+        updateCoord();
+        markDirty(true);
+      });
+    });
     ip.querySelectorAll("input[type=number][data-s]").forEach(inp => {
       inp.addEventListener("change", () => {
         const key = inp.dataset.s;
@@ -1274,6 +1349,8 @@
 
   function updateInspectorValues(el) {
     const ip = $("#inspector");
+    const r = posOf(el);
+    ip.querySelectorAll("input[type=number][data-bp]").forEach(inp => { inp.value = r[inp.dataset.bp]; });
     ip.querySelectorAll("input[type=number][data-s]").forEach(inp => { inp.value = el.style[inp.dataset.s]; });
     ip.querySelectorAll("input[type=number][data-p]").forEach(inp => { inp.value = el.props[inp.dataset.p]; });
     ip.querySelectorAll("input[type=text][data-p]").forEach(inp => { inp.value = el.props[inp.dataset.p] || ""; });
@@ -1322,6 +1399,10 @@
     const ip = $("#inspector");
     const el = selEl();
     if (!el) return;
+    const r = posOf(el);
+    ip.querySelectorAll("input[type=number][data-bp]").forEach(inp => {
+      if (document.activeElement !== inp) inp.value = r[inp.dataset.bp];
+    });
     ip.querySelectorAll("input[type=number][data-s]").forEach(inp => {
       if (document.activeElement !== inp) inp.value = el.style[inp.dataset.s];
     });
@@ -1377,8 +1458,9 @@
     state.groups.forEach(g => {
       const els = g.ids.map(elById).filter(Boolean);
       if (!els.length) return;
-      const minX = Math.min(...els.map(e => e.x)), minY = Math.min(...els.map(e => e.y));
-      const maxX = Math.max(...els.map(e => e.x + e.w)), maxY = Math.max(...els.map(e => e.y + e.h));
+      const rects = els.map(posOf);
+      const minX = Math.min(...rects.map(r => r.x)), minY = Math.min(...rects.map(r => r.y));
+      const maxX = Math.max(...rects.map(r => r.x + r.w)), maxY = Math.max(...rects.map(r => r.y + r.h));
       g.x = minX; g.y = minY; g.w = maxX - minX; g.h = maxY - minY;
       const o = document.createElement("div");
       o.className = "grp-overlay";
@@ -1395,7 +1477,8 @@
         const mv = ev => {
           const dx = (ev.clientX - startX) / zoom, dy = (ev.clientY - startY) / zoom;
           const nx = Math.round(ox + dx), ny = Math.round(oy + dy);
-          g.ids.map(elById).filter(Boolean).forEach(el => { el.x += nx - g.x; el.y += ny - g.y; });
+          const ddx = nx - g.x, ddy = ny - g.y;
+          g.ids.map(elById).filter(Boolean).forEach(el => { const r = posOf(el); setPos(el, { x: r.x + ddx, y: r.y + ddy, w: r.w, h: r.h }); });
           g.x = nx; g.y = ny;
           const od = document.querySelector('.grp-overlay[data-gid="' + g.id + '"]');
           if (od) { od.style.left = nx + "px"; od.style.top = ny + "px"; }
@@ -1480,7 +1563,8 @@
     list.forEach(el => {
       const cp = JSON.parse(JSON.stringify(el));
       cp.id = genId();
-      cp.x += 24; cp.y += 24;
+      const r = posOf(cp);
+      setPos(cp, { x: r.x + 24, y: r.y + 24, w: r.w, h: r.h });
       news.push(cp);
       const g = state.groups.find(g => g.ids.includes(el.id));
       if (g) g.ids.push(cp.id);
@@ -1511,7 +1595,8 @@
       const oldId = cp.id;
       cp.id = genId();
       map[oldId] = cp.id;
-      cp.x += 20; cp.y += 20;
+      const r = posOf(cp);
+      setPos(cp, { x: r.x + 20, y: r.y + 20, w: r.w, h: r.h });
       return cp;
     });
     clipboardGroups.forEach(g => {
@@ -1748,6 +1833,13 @@
 
   /* ---------- 画布设置 ---------- */
   function bindCanvasSettings() {
+    $$("#panel-canvas .seg-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        state.bpView = btn.dataset.bp;
+        $$("#panel-canvas .seg-btn").forEach(b => b.classList.toggle("on", b === btn));
+        renderStage(); refreshSelection(); renderInspector(); renderLayers(); updateCoord();
+      });
+    });
     $("#cv-w").addEventListener("change", () => {
       state.stage.w = clamp(parseInt($("#cv-w").value) || 1280, 320, 1920);
       $("#cv-w").value = state.stage.w;
@@ -1757,6 +1849,27 @@
       state.stage.h = clamp(parseInt($("#cv-h").value) || 720, 240, 2400);
       $("#cv-h").value = state.stage.h;
       renderStage(); markDirty(true); zoomFit();
+    });
+    BPS.forEach(b => {
+      const bindBp = (axis, min, max) => {
+        const inp = $("#bp-" + axis + "-" + b);
+        inp.addEventListener("change", () => {
+          const v = clamp(parseInt(inp.value) || min, min, max);
+          inp.value = v;
+          if (b === "desktop") {
+            state.stage[axis] = v;
+            $("#cv-" + axis).value = v;
+          } else {
+            const s = bpSize(b);
+            setBpSize(b, axis === "w" ? v : s.w, axis === "h" ? v : s.h);
+          }
+          renderStage(); markDirty(true);
+          if (b === "desktop") zoomFit();
+          syncCanvasPanel();
+        });
+      };
+      bindBp("w", 320, 1920);
+      bindBp("h", 240, 2400);
     });
     $("#cv-bg").addEventListener("input", () => {
       state.stage.bg = $("#cv-bg").value;
@@ -1783,6 +1896,12 @@
   function syncCanvasPanel() {
     $("#cv-w").value = state.stage.w;
     $("#cv-h").value = state.stage.h;
+    BPS.forEach(b => {
+      const s = bpSize(b);
+      const wi = $("#bp-w-" + b), hi = $("#bp-h-" + b);
+      if (wi) wi.value = s.w;
+      if (hi) hi.value = s.h;
+    });
     $("#cv-bg").value = state.stage.bg;
     $("#cv-bg-hex").value = state.stage.bg;
     $("#cv-grid").checked = state.stage.grid;
@@ -1827,7 +1946,8 @@
   }
   function updateCoord() {
     const el = selEl();
-    $("#sb-coord").textContent = el ? "X " + el.x + "  Y " + el.y + "  W " + el.w + "  H " + el.h : "";
+    const r = el ? posOf(el) : null;
+    $("#sb-coord").textContent = el && r ? "X " + r.x + "  Y " + r.y + "  W " + r.w + "  H " + r.h + "  [" + BP_NAMES[curBp()] + "]" : "";
   }
   function updateUndoBtns() {
     $("#tb-undo").classList.toggle("disabled", histIdx <= 0);
@@ -1979,7 +2099,7 @@
   function projectJSON() {
     const pages = state.pages.length ? state.pages : [{ id: "page_1", name: "页面 1", elements: state.elements }];
     return JSON.stringify({
-      version: 2, title: state.title, stage: state.stage, pageIdx: state.pageIdx,
+      version: 3, title: state.title, stage: state.stage, pageIdx: state.pageIdx,
       pages: pages.map(p => ({ id: p.id, name: p.name, elements: p.elements, groups: p.groups || [] }))
     }, null, 2);
   }
@@ -2041,7 +2161,8 @@
         const data = JSON.parse(r.content);
         if (!data || (!Array.isArray(data.elements) && !Array.isArray(data.pages))) throw new Error("格式不正确");
         state.title = data.title || "未命名页面";
-        state.stage = Object.assign({ w: 1280, h: 720, bg: "#ffffff", grid: true }, data.stage);
+        state.stage = Object.assign({ w: 1280, h: 720, bg: "#ffffff", grid: true, bp: { tablet: { w: 768, h: 1024 }, mobile: { w: 390, h: 844 } } }, data.stage);
+        if (!state.stage.bp) state.stage.bp = { tablet: { w: 768, h: 1024 }, mobile: { w: 390, h: 844 } };
         if (Array.isArray(data.pages) && data.pages.length) {
           state.pages = data.pages.map((p, i) => ({ id: p.id || ("page_" + (i + 1)), name: p.name || ("页面 " + (i + 1)), elements: p.elements || [], groups: p.groups || [] }));
           state.pageIdx = Math.max(0, Math.min(data.pageIdx || 0, state.pages.length - 1));
@@ -2071,7 +2192,7 @@
       if (!ok) return;
     }
     state.title = "未命名页面";
-    state.stage = { w: 1280, h: 720, bg: "#ffffff", grid: true };
+    state.stage = { w: 1280, h: 720, bg: "#ffffff", grid: true, bp: { tablet: { w: 768, h: 1024 }, mobile: { w: 390, h: 844 } } };
     state.pages = [{ id: "page_1", name: "页面 1", elements: [], groups: [] }];
     state.pageIdx = 0;
     state.elements = state.pages[0].elements;
@@ -2163,8 +2284,9 @@
       }
       case "center-h": case "center-v": {
         const el = selEl(); if (!el) break;
-        if (cmd === "center-h") el.x = Math.round((state.stage.w - el.w) / 2);
-        else el.y = Math.round((state.stage.h - el.h) / 2);
+        const r = posOf(el), ss = stageSize();
+        if (cmd === "center-h") setPos(el, { x: Math.round((ss.w - r.w) / 2), y: r.y, w: r.w, h: r.h });
+        else setPos(el, { x: r.x, y: Math.round((ss.h - r.h) / 2), w: r.w, h: r.h });
         renderStage(); renderInspector(); renderLayers(); updateSelInfo(); pushHistory();
         break;
       }
@@ -2194,28 +2316,29 @@
       return;
     }
     if (list.length < 2) { toast("请按住 Ctrl 多选两个以上组件后再对齐"); return; }
-    const xs = list.map(e => e.x), ys = list.map(e => e.y);
-    const xe = list.map(e => e.x + e.w), ye = list.map(e => e.y + e.h);
+    const rs = list.map(e => posOf(e));
+    const xs = rs.map(r => r.x), ys = rs.map(r => r.y);
+    const xe = rs.map(r => r.x + r.w), ye = rs.map(r => r.y + r.h);
     const minX = Math.min(...xs), maxX = Math.max(...xe), minY = Math.min(...ys), maxY = Math.max(...ye);
-    if (cmd === "align-left") list.forEach(e => e.x = minX);
-    else if (cmd === "align-h") { const cx = (minX + maxX) / 2; list.forEach(e => e.x = cx - e.w / 2); }
-    else if (cmd === "align-right") list.forEach(e => e.x = maxX - e.w);
-    else if (cmd === "align-top") list.forEach(e => e.y = minY);
-    else if (cmd === "align-v") { const cy = (minY + maxY) / 2; list.forEach(e => e.y = cy - e.h / 2); }
-    else if (cmd === "align-bottom") list.forEach(e => e.y = maxY - e.h);
+    if (cmd === "align-left") list.forEach((e, i) => { const r = rs[i]; setPos(e, { x: minX, y: r.y, w: r.w, h: r.h }); });
+    else if (cmd === "align-h") { const cx = (minX + maxX) / 2; list.forEach((e, i) => { const r = rs[i]; setPos(e, { x: cx - r.w / 2, y: r.y, w: r.w, h: r.h }); }); }
+    else if (cmd === "align-right") list.forEach((e, i) => { const r = rs[i]; setPos(e, { x: maxX - r.w, y: r.y, w: r.w, h: r.h }); });
+    else if (cmd === "align-top") list.forEach((e, i) => { const r = rs[i]; setPos(e, { x: r.x, y: minY, w: r.w, h: r.h }); });
+    else if (cmd === "align-v") { const cy = (minY + maxY) / 2; list.forEach((e, i) => { const r = rs[i]; setPos(e, { x: r.x, y: cy - r.h / 2, w: r.w, h: r.h }); }); }
+    else if (cmd === "align-bottom") list.forEach((e, i) => { const r = rs[i]; setPos(e, { x: r.x, y: maxY - r.h, w: r.w, h: r.h }); });
     else if (cmd === "dist-h") {
-      const sorted = list.slice().sort((a, b) => a.x - b.x);
-      const totalW = sorted.reduce((s, e) => s + e.w, 0);
-      const gap = (sorted[sorted.length - 1].x + sorted[sorted.length - 1].w - sorted[0].x - totalW) / (sorted.length - 1);
-      let cur = sorted[0].x + sorted[0].w;
-      for (let i = 1; i < sorted.length; i++) { sorted[i].x = cur + gap; cur = sorted[i].x + sorted[i].w; }
+      const sorted = list.slice().sort((a, b) => posOf(a).x - posOf(b).x);
+      const totalW = sorted.reduce((s, e) => s + posOf(e).w, 0);
+      const gap = (posOf(sorted[sorted.length - 1]).x + posOf(sorted[sorted.length - 1]).w - posOf(sorted[0]).x - totalW) / (sorted.length - 1);
+      let cur = posOf(sorted[0]).x + posOf(sorted[0]).w;
+      for (let i = 1; i < sorted.length; i++) { const r = posOf(sorted[i]); setPos(sorted[i], { x: cur + gap, y: r.y, w: r.w, h: r.h }); cur = posOf(sorted[i]).x + posOf(sorted[i]).w; }
     }
     else if (cmd === "dist-v") {
-      const sorted = list.slice().sort((a, b) => a.y - b.y);
-      const totalH = sorted.reduce((s, e) => s + e.h, 0);
-      const gap = (sorted[sorted.length - 1].y + sorted[sorted.length - 1].h - sorted[0].y - totalH) / (sorted.length - 1);
-      let cur = sorted[0].y + sorted[0].h;
-      for (let i = 1; i < sorted.length; i++) { sorted[i].y = cur + gap; cur = sorted[i].y + sorted[i].h; }
+      const sorted = list.slice().sort((a, b) => posOf(a).y - posOf(b).y);
+      const totalH = sorted.reduce((s, e) => s + posOf(e).h, 0);
+      const gap = (posOf(sorted[sorted.length - 1]).y + posOf(sorted[sorted.length - 1]).h - posOf(sorted[0]).y - totalH) / (sorted.length - 1);
+      let cur = posOf(sorted[0]).y + posOf(sorted[0]).h;
+      for (let i = 1; i < sorted.length; i++) { const r = posOf(sorted[i]); setPos(sorted[i], { x: r.x, y: cur + gap, w: r.w, h: r.h }); cur = posOf(sorted[i]).y + posOf(sorted[i]).h; }
     }
     renderStage(); renderInspector(); renderLayers(); updateSelInfo(); pushHistory();
   }
