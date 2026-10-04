@@ -184,6 +184,72 @@ const WUIS_EXPORTER = (function () {
           : '<span style="font-size:' + Math.round(size * 0.4) + "px\">" + esc(p.text || "U") + "</span>";
         return '<div class="wuis-avatar" style="width:' + size + "px;height:" + size + "px;border-radius:" + shape + ";background:" + (st.accentColor || "#4f8cff") + ';">' + inner + "</div>";
       }
+      case "carousel": {
+        const imgs = String(p.images || "").split(",").map(s => s.trim()).filter(Boolean);
+        const iv = Math.max(0, parseInt(p.interval, 10) || 0);
+        const slides = imgs.length
+          ? imgs.map((u, i) => '<div class="wc-slide"><img src="' + esc(u) + '" alt="轮播 ' + (i + 1) + '"></div>').join("")
+          : '<div class="wc-slide"><span style="color:#8a8f98;font-size:24px;">IMG</span></div>';
+        return '<div class="wuis-carousel" data-interval="' + iv + '" style="border-radius:' + st.radius + 'px;">'
+          + '<div class="wc-view"><div class="wc-slides">' + slides + '</div></div>'
+          + '<div class="wc-dots">' + imgs.map((_, i) => '<span class="wc-dot' + (i === 0 ? " on" : "") + '"></span>').join("") + '</div></div>';
+      }
+      case "breadcrumb": {
+        const items = String(p.items || "首页,产品,详情").split(",").map(s => s.trim()).filter(Boolean);
+        const col = st.accentColor || "#4f8cff";
+        return '<div class="wuis-crumb" style="' + fontF + '">' + items.map((it, i) => i < items.length - 1
+          ? '<a class="wcr-item" style="color:' + st.textColor + '">' + esc(it) + '</a><span class="wcr-sep" style="color:' + col + '">/</span>'
+          : '<span class="wcr-item" style="color:' + col + ';font-weight:600">' + esc(it) + '</span>').join("") + '</div>';
+      }
+      case "stat": {
+        const icons = {
+          user: '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.2-4 4.6-6 8-6s6.8 2 8 6"/></svg>',
+          star: '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="m12 3 2.7 5.9 6.3.7-4.7 4.3 1.3 6.1L12 16.9 6.4 20l1.3-6.1L3 9.6l6.3-.7Z"/></svg>',
+          cart: '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="20" r="1.5"/><circle cx="17" cy="20" r="1.5"/><path d="M3 4h2l2.6 11h10.2L21 7H6"/></svg>',
+          heart: '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20s-7-4.3-7-9.5A4.4 4.4 0 0 1 12 7a4.4 4.4 0 0 1 7 3.5C19 15.7 12 20 12 20Z"/></svg>',
+          arrow: '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h14M13 6l6 6-6 6"/></svg>',
+          check: '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m5 12 5 5 9-10"/></svg>'
+        };
+        const ic = icons[p.icon] || "";
+        const raw = String(p.value || "0");
+        const num = /^-?\d+(\.\d+)?$/.test(raw.replace(/,/g, "")) ? Number(raw.replace(/,/g, "")) : null;
+        const fmt = num != null ? num.toLocaleString("zh-CN", { maximumFractionDigits: 1 }) : raw;
+        const bg = st.bgGradient || st.bgColor || "#ffffff";
+        return '<div class="wuis-stat" style="background:' + bg + ";border-radius:" + st.radius + "px;" + fontF + '">'
+          + '<div class="wst-top"><span class="wst-ic" style="color:' + (st.accentColor || "#4f8cff") + ';background:' + (st.accentColor || "#4f8cff") + '1f;">' + ic + '</span>'
+          + '<span class="wst-label" style="color:' + st.textColor + ";font-size:" + Math.max(11, (st.fontSize || 14) - 3) + 'px;">' + esc(p.label || "") + '</span></div>'
+          + '<div class="wst-val" style="color:' + (st.accentColor || "#4f8cff") + ";font-size:" + Math.max(20, (st.fontSize || 14) + 8) + "px;font-weight:700;\">" + esc(p.prefix || "") + fmt + esc(p.suffix || "") + '</div></div>';
+      }
+      case "price": {
+        const bg = st.bgGradient || st.bgColor || "#ffffff";
+        const col = st.accentColor || "#4f8cff";
+        const featured = p.featured ? " wpr-feat" : "";
+        return '<div class="wuis-price' + featured + '" style="background:' + bg + ";border-radius:" + st.radius + "px;border:1.5px solid " + (p.featured ? col : st.borderColor) + ";" + fontF + '">'
+          + '<div class="wpr-title" style="color:' + st.textColor + ";font-size:" + st.fontSize + 'px;">' + esc(p.title || "专业版") + '</div>'
+          + '<div class="wpr-price"><span class="wpr-sym" style="color:' + col + ';">¥</span><span class="wpr-num" style="color:' + st.textColor + ";font-size:" + Math.max(24, (st.fontSize || 14) + 14) + 'px;">' + esc(p.price || "0") + '</span><span class="wpr-period" style="color:' + st.textColor + ";font-size:" + Math.max(11, (st.fontSize || 14) - 4) + "px;opacity:.6;\">" + esc(p.period || "") + '</span></div>'
+          + '<div class="wpr-desc" style="color:' + st.textColor + ";font-size:" + Math.max(11, (st.fontSize || 14) - 3) + "px;opacity:.7;\">" + esc(p.desc || "") + '</div>'
+          + '<button class="wpr-btn" style="background:' + col + ";border-radius:" + Math.max(3, (st.radius || 8) - 3) + 'px;">' + esc(p.btnText || "立即订阅") + '</button></div>';
+      }
+      case "sidebar": {
+        const items = String(p.items || "仪表盘,数据分析,用户管理").split(",").map(s => s.trim()).filter(Boolean);
+        const bg = st.bgGradient || st.bgColor || "#ffffff";
+        const col = st.accentColor || "#4f8cff";
+        return '<div class="wuis-sidebar" style="background:' + bg + ";border-radius:" + st.radius + "px;" + fontF + '">'
+          + '<div class="wsb-brand" style="color:' + st.textColor + ";font-size:" + Math.max(13, st.fontSize || 14) + "px;font-weight:700;\">" + esc(p.brand || "WebUI") + '</div>'
+          + '<div class="wsb-menu">' + items.map((it, i) => '<div class="wsb-item' + (i === 0 ? " on" : "") + '" style="color:' + (i === 0 ? col : st.textColor) + ";font-size:" + (st.fontSize || 14) + "px;border-radius:" + Math.max(2, (st.radius || 8) - 4) + "px;background:" + (i === 0 ? col + "14" : "transparent") + ';">' + esc(it) + '</div>').join("") + '</div></div>';
+      }
+      case "notice": {
+        const toneMap = {
+          info: { bg: "#e8f1ff", fg: "#1f6bff", label: "信息" },
+          success: { bg: "#e6f9ef", fg: "#12a05c", label: "成功" },
+          warn: { bg: "#fff5e0", fg: "#c77a00", label: "提醒" },
+          danger: { bg: "#ffecec", fg: "#d93a3a", label: "警告" }
+        };
+        const t = toneMap[p.tone] || toneMap.info;
+        return '<div class="wuis-notice" style="background:' + t.bg + ";border-left:3px solid " + t.fg + ";border-radius:" + st.radius + "px;" + fontF + '">'
+          + '<span class="wnt-label" style="background:' + t.fg + ';">' + t.label + '</span>'
+          + '<span class="wnt-text" style="color:' + t.fg + ";font-size:" + st.fontSize + 'px;">' + esc(p.text || "") + '</span></div>';
+      }
       case "custom": {
         return p.html || "";
       }
@@ -397,7 +463,41 @@ body{min-height:100vh;background:#eef0f4;font-family:"Segoe UI","Microsoft YaHei
 .el[data-anim="slideUp"]{animation:wuis-slide-up var(--anim-dur,.4s) ease both}
 .el[data-anim="slideLeft"]{animation:wuis-slide-left var(--anim-dur,.4s) ease both}
 .el[data-anim="zoomIn"]{animation:wuis-zoom-in var(--anim-dur,.4s) ease both}
-.el[data-anim="bounceIn"]{animation:wuis-bounce-in var(--anim-dur,.5s) ease both}`;
+.el[data-anim="bounceIn"]{animation:wuis-bounce-in var(--anim-dur,.5s) ease both}
+.wuis-carousel{position:relative;overflow:hidden;background:#eef1f5}
+.wuis-carousel .wc-view{width:100%;height:100%;overflow:hidden}
+.wuis-carousel .wc-slides{display:flex;height:100%;transition:transform .45s ease}
+.wuis-carousel .wc-slide{flex:0 0 100%;width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#eef1f5;color:#8a8f98;font-size:24px}
+.wuis-carousel .wc-slide img{width:100%;height:100%;object-fit:cover;display:block}
+.wuis-carousel .wc-dots{position:absolute;left:0;right:0;bottom:12px;display:flex;justify-content:center;gap:7px}
+.wuis-carousel .wc-dot{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.6);cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:background .15s,transform .15s}
+.wuis-carousel .wc-dot.on{background:#fff;transform:scale(1.25)}
+.wuis-crumb{width:100%;height:100%;display:flex;align-items:center;gap:7px;overflow:hidden;white-space:nowrap}
+.wuis-crumb .wcr-item{flex-shrink:0;cursor:pointer;text-decoration:none;white-space:nowrap}
+.wuis-crumb .wcr-sep{flex-shrink:0}
+.wuis-stat{width:100%;height:100%;display:flex;flex-direction:column;justify-content:center;gap:8px;padding:0 16px;box-sizing:border-box;min-width:0}
+.wuis-stat .wst-top{display:flex;align-items:center;gap:8px;min-width:0}
+.wuis-stat .wst-ic{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:7px;flex-shrink:0}
+.wuis-stat .wst-label{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wuis-stat .wst-val{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums;line-height:1.1}
+.wuis-price{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:18px 14px;box-sizing:border-box;text-align:center;position:relative}
+.wuis-price.wpr-feat{box-shadow:0 8px 24px rgba(79,140,255,.18)}
+.wuis-price .wpr-title{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.wuis-price .wpr-price{display:flex;align-items:baseline;gap:3px;line-height:1}
+.wuis-price .wpr-sym{font-size:15px;font-weight:700}
+.wuis-price .wpr-num{font-weight:700;font-variant-numeric:tabular-nums}
+.wuis-price .wpr-period{white-space:nowrap}
+.wuis-price .wpr-desc{max-height:48px;overflow:hidden;line-height:1.5}
+.wuis-price .wpr-btn{border:none;color:#fff;padding:9px 22px;font-size:13px;font-weight:600;cursor:pointer;transition:filter .1s,transform .1s}
+.wuis-price .wpr-btn:hover{filter:brightness(1.08)}
+.wuis-sidebar{width:100%;height:100%;display:flex;flex-direction:column;padding:14px 10px;box-sizing:border-box;gap:16px;overflow:hidden}
+.wuis-sidebar .wsb-brand{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-shrink:0}
+.wuis-sidebar .wsb-menu{display:flex;flex-direction:column;gap:4px;flex:1;overflow:auto}
+.wuis-sidebar .wsb-item{padding:9px 12px;font-size:13.5px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:background .12s;flex-shrink:0}
+.wuis-sidebar .wsb-item:hover{filter:brightness(.97)}
+.wuis-notice{width:100%;height:100%;display:flex;align-items:center;gap:10px;padding:0 14px;box-sizing:border-box;overflow:hidden}
+.wuis-notice .wnt-label{flex-shrink:0;color:#fff;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;letter-spacing:.5px}
+.wuis-notice .wnt-text{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}`;
 
   const RUNTIME = `(function(){
 function $$(s,c){return Array.prototype.slice.call((c||document).querySelectorAll(s));}
@@ -460,6 +560,24 @@ document.addEventListener('click',function(e){
   else if(act==='toggle'&&tar){var tgt=document.querySelector('.el[data-el-id="'+tar+'"]');if(tgt){tgt.style.display=(tgt.style.display==='none')?'':'none';}}
 });
 window.addEventListener('resize',fit);
+$$('.wuis-carousel').forEach(function(cr){
+  var slides=$$('.wc-slide',cr);var dots=$$('.wc-dot',cr);
+  if(slides.length<2)return;
+  var idx=0,timer=null;
+  function go(i){
+    idx=(i+slides.length)%slides.length;
+    var view=cr.querySelector('.wc-slides');
+    if(view)view.style.transform='translateX(-'+(idx*100)+'%)';
+    dots.forEach(function(d,k){d.classList.toggle('on',k===idx);});
+  }
+  dots.forEach(function(d,k){d.addEventListener('click',function(){go(k);restart();});});
+  function restart(){
+    if(timer)clearInterval(timer);
+    var iv=parseInt(cr.getAttribute('data-interval'),10);
+    if(iv>0)timer=setInterval(function(){go(idx+1);},iv*1000);
+  }
+  restart();
+});
 document.addEventListener('DOMContentLoaded',function(){fit();replay(PAGES[0]);});
 if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',fit);}else{fit();replay(PAGES[0]);}
 })();`;

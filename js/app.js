@@ -39,7 +39,13 @@
     steps: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#5b8cff" stroke-width="1.7"><circle cx="5" cy="12" r="2.2" fill="#5b8cff" stroke="none"/><circle cx="12" cy="12" r="2.2"/><circle cx="19" cy="12" r="2.2"/><path d="M7.4 12h3.2M14.4 12h3.2" opacity=".5"/></svg>',
     timeline: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#5b8cff" stroke-width="1.7"><path d="M5 4v16" opacity=".45"/><circle cx="5" cy="7" r="2" fill="#5b8cff" stroke="none"/><circle cx="5" cy="13" r="2"/><circle cx="5" cy="19" r="2"/><path d="M9 7h10M9 13h8M9 19h11" stroke-linecap="round" opacity=".7"/></svg>',
     footer: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#5b8cff" stroke-width="1.7"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 16h18M9 13h6M10 19h4" opacity=".6" stroke-linecap="round"/></svg>',
-    avatar: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#5b8cff" stroke-width="1.7"><circle cx="12" cy="9" r="3.4"/><path d="M5 19c1.2-3.2 4-4.6 7-4.6s5.8 1.4 7 4.6"/></svg>'
+    avatar: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#5b8cff" stroke-width="1.7"><circle cx="12" cy="9" r="3.4"/><path d="M5 19c1.2-3.2 4-4.6 7-4.6s5.8 1.4 7 4.6"/></svg>',
+    carousel: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#5b8cff" stroke-width="1.7"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="m10 9-3 3 3 3M14 9l3 3-3 3" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    breadcrumb: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#5b8cff" stroke-width="1.7" stroke-linejoin="round"><path d="M4 8h6l4 4-4 4H4Z"/><path d="M12 8h6l4 4-4 4h-6" opacity=".45"/></svg>',
+    stat: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#5b8cff" stroke-width="1.7"><path d="M4 20V10M9.5 20V5M15 20v-7M20.5 20V8" stroke-linecap="round"/><path d="m4 10 5.5-5 5.5 7 5.5-4" opacity=".5" stroke-linejoin="round"/></svg>',
+    price: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#5b8cff" stroke-width="1.7"><path d="M3 7h18v10H3Z" rx="3"/><text x="12" y="14.5" text-anchor="middle" font-size="9" fill="#5b8cff" stroke="none" font-weight="700">¥</text></svg>',
+    sidebar: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#5b8cff" stroke-width="1.7"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9 4v16" opacity=".4"/><path d="M12 9h7M12 12.5h7M12 16h4" stroke-linecap="round"/></svg>',
+    notice: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#5b8cff" stroke-width="1.7"><path d="M6 9a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6"/><path d="M10 19a2 2 0 0 0 4 0"/><path d="M13 5.5V3M16 4l-1.5 1.5" opacity=".5"/></svg>'
   };
 
   const TYPE_NAMES = {
@@ -49,7 +55,8 @@
     tabs: "标签页", card: "卡片", chart: "图表", table: "表格", video: "视频", date: "日期选择", modal: "弹窗",
     custom: "自定义 HTML",
     list: "列表", rating: "评分", search: "搜索框", navbar: "导航栏",
-    steps: "步骤条", timeline: "时间线", footer: "页脚", avatar: "头像"
+    steps: "步骤条", timeline: "时间线", footer: "页脚", avatar: "头像",
+    carousel: "轮播图", breadcrumb: "面包屑", stat: "统计数字", price: "价格卡", sidebar: "侧边菜单", notice: "通知条"
   };
 
   const DEFAULT_STYLE = () => ({
@@ -88,11 +95,17 @@
     steps: () => ({ items: "第一步,第二步,第三步", active: 1 }),
     timeline: () => ({ items: "2026-01|发布 v1.0\n2026-06|新增 20+ 组件", dotColor: "#2f5cff" }),
     footer: () => ({ text: "© 2026 WebUI Studio. All rights reserved.", links: "关于,隐私,条款" }),
-    avatar: () => ({ src: "", text: "U", shape: "circle" })
+    avatar: () => ({ src: "", text: "U", shape: "circle" }),
+    carousel: () => ({ images: "https://picsum.photos/seed/a/800/320,https://picsum.photos/seed/b/800/320,https://picsum.photos/seed/c/800/320", interval: 3 }),
+    breadcrumb: () => ({ items: "首页,产品中心,详情页" }),
+    stat: () => ({ value: "12,345", label: "累计用户", prefix: "", suffix: "", icon: "user" }),
+    price: () => ({ title: "专业版", price: "99", period: "/月", desc: "适合进阶用户，含全部高级功能与专属支持。", btnText: "立即订阅", featured: false }),
+    sidebar: () => ({ brand: "WebUI", items: "仪表盘,数据分析,用户管理,系统设置" }),
+    notice: () => ({ text: "系统将于今晚 23:00 进行维护，请提前保存数据。", tone: "info" })
   };
 
-  const DEF_W = { button: 150, text: 180, switch: 90, input: 220, slider: 240, select: 180, checkbox: 140, radio: 140, image: 200, progress: 260, divider: 220, container: 320, badge: 70, tabs: 260, card: 260, chart: 360, table: 340, video: 360, date: 200, modal: 200, custom: 240, list: 220, rating: 180, search: 280, navbar: 600, steps: 380, timeline: 260, footer: 600, avatar: 56 };
-  const DEF_H = { button: 44, text: 32, switch: 34, input: 40, slider: 34, select: 40, checkbox: 30, radio: 30, image: 140, progress: 30, divider: 24, container: 200, badge: 28, tabs: 120, card: 180, chart: 200, table: 160, video: 200, date: 40, modal: 44, custom: 120, list: 150, rating: 36, search: 40, navbar: 48, steps: 52, timeline: 170, footer: 56, avatar: 56 };
+  const DEF_W = { button: 150, text: 180, switch: 90, input: 220, slider: 240, select: 180, checkbox: 140, radio: 140, image: 200, progress: 260, divider: 220, container: 320, badge: 70, tabs: 260, card: 260, chart: 360, table: 340, video: 360, date: 200, modal: 200, custom: 240, list: 220, rating: 180, search: 280, navbar: 600, steps: 380, timeline: 260, footer: 600, avatar: 56, carousel: 560, breadcrumb: 320, stat: 220, price: 240, sidebar: 240, notice: 640 };
+  const DEF_H = { button: 44, text: 32, switch: 34, input: 40, slider: 34, select: 40, checkbox: 30, radio: 30, image: 140, progress: 30, divider: 24, container: 200, badge: 28, tabs: 120, card: 180, chart: 200, table: 160, video: 200, date: 40, modal: 44, custom: 120, list: 150, rating: 36, search: 40, navbar: 48, steps: 52, timeline: 170, footer: 56, avatar: 56, carousel: 220, breadcrumb: 36, stat: 88, price: 260, sidebar: 360, notice: 44 };
 
   /* ---------- 状态 ---------- */
   const state = {
@@ -441,6 +454,66 @@
           : '<span style="font-size:' + Math.round(size * 0.42) + 'px;font-weight:600;">' + esc(p.text || "U") + '</span>';
         return '<div class="wuis-avatar" style="width:' + size + 'px;height:' + size + 'px;border-radius:' + shape + ';background:' + st.accentColor + ';color:#fff;">' + inner + '</div>';
       }
+      case "carousel": {
+        const imgs = String(p.images || "").split(",").map(s => s.trim()).filter(Boolean);
+        const slide = imgs[0]
+          ? '<div class="wc-slide"><img src="' + esc(imgs[0]) + '" alt=""></div>'
+          : '<div class="wc-slide" style="background:#eef1f5;display:flex;align-items:center;justify-content:center;"><span style="font-size:26px;color:#b7c2d0;">IMG</span></div>';
+        return '<div class="wuis-carousel" style="border-radius:' + st.radius + 'px;">' + slide
+          + '<div class="wc-dots">' + imgs.map((_, i) => '<span class="wc-dot' + (i === 0 ? " on" : "") + '" data-i="' + i + '"></span>').join("") + '</div></div>';
+      }
+      case "breadcrumb": {
+        const items = String(p.items || "").split(",").map(s => s.trim()).filter(Boolean);
+        return '<div class="wuis-crumb" style="font-size:' + st.fontSize + 'px;">'
+          + items.map((it, i) => i < items.length - 1
+            ? '<span class="wcr-item" style="color:' + st.textColor + ';">' + esc(it) + '</span><span class="wcr-sep" style="color:' + st.accentColor + ';opacity:.75;">/</span>'
+            : '<span class="wcr-item" style="color:' + st.accentColor + ';font-weight:600;">' + esc(it) + '</span>').join("")
+          + '</div>';
+      }
+      case "stat": {
+        const icons = {
+          user: '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.2-4 4.6-6 8-6s6.8 2 8 6"/></svg>',
+          star: '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="m12 3 2.7 5.9 6.3.7-4.7 4.3 1.3 6.1L12 16.9 6.4 20l1.3-6.1L3 9.6l6.3-.7Z"/></svg>',
+          cart: '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="20" r="1.5"/><circle cx="17" cy="20" r="1.5"/><path d="M3 4h2l2.6 11h10.2L21 7H6"/></svg>',
+          heart: '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20s-7-4.3-7-9.5A4.4 4.4 0 0 1 12 7a4.4 4.4 0 0 1 7 3.5C19 15.7 12 20 12 20Z"/></svg>',
+          arrow: '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h14M13 6l6 6-6 6"/></svg>',
+          check: '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m5 12 5 5 9-10"/></svg>'
+        };
+        const ic = icons[p.icon] || "";
+        const raw = String(p.value || "0");
+        const num = /^-?\d+(\.\d+)?$/.test(raw.replace(/,/g, "")) ? Number(raw.replace(/,/g, "")) : null;
+        const fmt = num != null ? num.toLocaleString("zh-CN", { maximumFractionDigits: 1 }) : raw;
+        return '<div class="wuis-stat" style="background:' + bgc(st) + ';border-radius:' + st.radius + 'px;">'
+          + '<div class="wst-top"><span class="wst-ic" style="color:' + st.accentColor + ';background:' + st.accentColor + '1f;">' + ic + '</span>'
+          + '<span class="wst-label" style="color:' + st.textColor + ';font-size:' + Math.max(11, st.fontSize - 3) + 'px;">' + esc(p.label || "") + '</span></div>'
+          + '<div class="wst-val" style="color:' + st.accentColor + ';font-size:' + Math.max(20, st.fontSize + 8) + 'px;font-weight:700;">' + esc(p.prefix || "") + fmt + esc(p.suffix || "") + '</div></div>';
+      }
+      case "price": {
+        const featured = p.featured ? " wpr-feat" : "";
+        return '<div class="wuis-price' + featured + '" style="background:' + bgc(st) + ';border-radius:' + st.radius + 'px;border:1.5px solid ' + (p.featured ? st.accentColor : st.borderColor) + ';">'
+          + '<div class="wpr-title" style="color:' + st.textColor + ';font-size:' + st.fontSize + 'px;">' + esc(p.title || "专业版") + '</div>'
+          + '<div class="wpr-price"><span class="wpr-sym" style="color:' + st.accentColor + ';">¥</span><span class="wpr-num" style="color:' + st.textColor + ';font-size:' + Math.max(24, st.fontSize + 14) + 'px;">' + esc(p.price || "0") + '</span><span class="wpr-period" style="color:' + st.textColor + ';font-size:' + Math.max(11, st.fontSize - 4) + 'px;opacity:.6;">' + esc(p.period || "") + '</span></div>'
+          + '<div class="wpr-desc" style="color:' + st.textColor + ';font-size:' + Math.max(11, st.fontSize - 3) + 'px;opacity:.7;">' + esc(p.desc || "") + '</div>'
+          + '<button class="wpr-btn" style="background:' + st.accentColor + ';border-radius:' + Math.max(3, st.radius - 3) + 'px;">' + esc(p.btnText || "立即订阅") + '</button></div>';
+      }
+      case "sidebar": {
+        const items = String(p.items || "").split(",").map(s => s.trim()).filter(Boolean);
+        return '<div class="wuis-sidebar" style="background:' + bgc(st) + ';border-radius:' + st.radius + 'px;">'
+          + '<div class="wsb-brand" style="color:' + st.textColor + ';font-size:' + Math.max(13, st.fontSize) + 'px;font-weight:700;">' + esc(p.brand || "WebUI") + '</div>'
+          + '<div class="wsb-menu">' + items.map((it, i) => '<div class="wsb-item' + (i === 0 ? " on" : "") + '" style="color:' + (i === 0 ? st.accentColor : st.textColor) + ';font-size:' + st.fontSize + 'px;border-radius:' + Math.max(2, st.radius - 4) + 'px;background:' + (i === 0 ? st.accentColor + "14" : "transparent") + ';">' + esc(it) + '</div>').join("") + '</div></div>';
+      }
+      case "notice": {
+        const toneMap = {
+          info: { bg: "#e8f1ff", fg: "#1f6bff", label: "信息" },
+          success: { bg: "#e6f9ef", fg: "#12a05c", label: "成功" },
+          warn: { bg: "#fff5e0", fg: "#c77a00", label: "提醒" },
+          danger: { bg: "#ffecec", fg: "#d93a3a", label: "警告" }
+        };
+        const t = toneMap[p.tone] || toneMap.info;
+        return '<div class="wuis-notice" style="background:' + t.bg + ';border-left:3px solid ' + t.fg + ';border-radius:' + st.radius + 'px;">'
+          + '<span class="wnt-label" style="background:' + t.fg + ';">' + t.label + '</span>'
+          + '<span class="wnt-text" style="color:' + t.fg + ';font-size:' + st.fontSize + 'px;">' + esc(p.text || "") + '</span></div>';
+      }
     }
     return "";
   }
@@ -514,6 +587,26 @@
     if (ws) {
       const wsi = ws.querySelector(".ws-input");
       if (wsi) wsi.addEventListener("mousedown", e => { if (el.id === state.selectedId) e.stopPropagation(); });
+    }
+    const carousel = d.querySelector(".wuis-carousel");
+    if (carousel) {
+      carousel.querySelectorAll(".wc-dot").forEach(dot => {
+        dot.addEventListener("mousedown", e => e.stopPropagation());
+        dot.addEventListener("click", e => {
+          if (el.locked) return;
+          e.stopPropagation();
+          const i = Number(dot.dataset.i);
+          const imgs = String(el.props.images || "").split(",").map(s => s.trim()).filter(Boolean);
+          const slide = carousel.querySelector(".wc-slide");
+          if (slide && imgs[i]) {
+            const img = slide.querySelector("img");
+            if (img) img.src = imgs[i];
+          }
+          carousel.querySelectorAll(".wc-dot").forEach(x => x.classList.toggle("on", x === dot));
+          markDirty(false);
+          selectEl(el.id);
+        });
+      });
     }
 
     const t = d.querySelector(".wuis-text");
@@ -903,6 +996,41 @@
         h += textRow("文字", "text", p.text);
         h += '<div class="prop"><label>形状</label><select data-p="shape">'
           + opt("circle", "圆形", p.shape) + opt("square", "圆角方形", p.shape) + '</select></div>';
+        break;
+      case "carousel":
+        h += textRow("图片 URL（逗号分隔）", "images", p.images);
+        h += numRowP("自动轮播间隔（秒，0 关闭）", "interval", p.interval, 0, 30);
+        break;
+      case "breadcrumb":
+        h += textRow("层级（逗号分隔，末项高亮）", "items", p.items);
+        break;
+      case "stat":
+        h += textRow("数值", "value", p.value);
+        h += textRow("标签", "label", p.label);
+        h += textRow("前缀（如 ¥）", "prefix", p.prefix);
+        h += textRow("后缀（如 %）", "suffix", p.suffix);
+        h += '<div class="prop"><label>图标</label><select data-p="icon">'
+          + opt("none", "无", p.icon) + opt("user", "用户", p.icon) + opt("star", "星标", p.icon)
+          + opt("cart", "购物车", p.icon) + opt("heart", "心形", p.icon) + opt("arrow", "箭头", p.icon) + opt("check", "对勾", p.icon)
+          + '</select></div>';
+        break;
+      case "price":
+        h += textRow("套餐名", "title", p.title);
+        h += textRow("价格", "price", p.price);
+        h += textRow("周期（如 /月）", "period", p.period);
+        h += textAreaRow("说明", "desc", p.desc);
+        h += textRow("按钮文字", "btnText", p.btnText);
+        h += '<div class="prop"><label>突出推荐</label><input type="checkbox" data-p="featured" ' + (p.featured ? "checked" : "") + '></div>';
+        break;
+      case "sidebar":
+        h += textRow("品牌名", "brand", p.brand);
+        h += textAreaRow("菜单项（逗号分隔）", "items", p.items);
+        break;
+      case "notice":
+        h += textAreaRow("通知文字", "text", p.text);
+        h += '<div class="prop"><label>色调</label><select data-p="tone">'
+          + opt("info", "信息", p.tone) + opt("success", "成功", p.tone) + opt("warn", "提醒", p.tone) + opt("danger", "警告", p.tone)
+          + '</select></div>';
         break;
     }
     return h;
@@ -1455,6 +1583,9 @@
       { type: "search", name: "搜索框" }, { type: "navbar", name: "导航栏", wide: true },
       { type: "steps", name: "步骤条" }, { type: "timeline", name: "时间线" },
       { type: "footer", name: "页脚", wide: true }, { type: "avatar", name: "头像" },
+      { type: "carousel", name: "轮播图", wide: true }, { type: "breadcrumb", name: "面包屑" },
+      { type: "stat", name: "统计数字" }, { type: "price", name: "价格卡" },
+      { type: "sidebar", name: "侧边菜单" }, { type: "notice", name: "通知条", wide: true },
       { type: "custom", name: "自定义 HTML", wide: true }
     ];
     grid.innerHTML = "";
@@ -1525,7 +1656,10 @@
       { name: "卡片页", icon: "▣", fn: buildTplCard },
       { name: "导航页", icon: "☰", fn: buildTplNav },
       { name: "表单页", icon: "▤", fn: buildTplForm },
-      { name: "数据页", icon: "▥", fn: buildTplData }
+      { name: "数据页", icon: "▥", fn: buildTplData },
+      { name: "着陆页", icon: "▸", fn: buildTplLanding },
+      { name: "看板页", icon: "▦", fn: buildTplDashboard },
+      { name: "电商页", icon: "▧", fn: buildTplShop }
     ];
     TPL.forEach(t => {
       const b = document.createElement("button");
@@ -1546,6 +1680,7 @@
       if (extra.fontSize) el.style.fontSize = extra.fontSize;
       if (extra.bold) el.style.bold = extra.bold;
       if (extra.color) el.style.textColor = extra.color;
+      if (extra.props) Object.assign(el.props, extra.props);
     }
     return el;
   }
@@ -1554,7 +1689,7 @@
     tplAdd("text", 40, 46, { text: "功能卡片", fontSize: 22, bold: true });
     tplAdd("text", 40, 92, { text: "这里是一段卡片描述文字，用于说明该卡片的功能与亮点，可双击编辑。", w: 320, h: 60, color: "#666666" });
     tplAdd("button", 40, 210, { text: "立即体验", w: 120 });
-    tplAdd("icon", 320, 44, { w: 44, h: 44 });
+    tplAdd("avatar", 330, 44, { w: 44, h: 44, props: { text: "A" } });
     renderStage(); renderLayers(); updateCount(); toast("已插入模板「卡片页」"); pushHistory();
   }
   function buildTplNav() {
@@ -1578,6 +1713,37 @@
     tplAdd("chart", 40, 80, { w: 520, h: 300 });
     tplAdd("table", 600, 80, { w: 460, h: 300 });
     renderStage(); renderLayers(); updateCount(); toast("已插入模板「数据页」"); pushHistory();
+  }
+  function buildTplLanding() {
+    tplAdd("navbar", 0, 0, { w: 1280 });
+    tplAdd("text", 90, 220, { text: "下一代网页设计工具", fontSize: 44, bold: true, w: 680, h: 64 });
+    tplAdd("text", 92, 302, { text: "拖拽即得，一键导出单文件 HTML，让创意立刻上线。", w: 640, h: 44, color: "#666666" });
+    tplAdd("button", 92, 372, { text: "免费开始", w: 150 });
+    tplAdd("button", 262, 372, { text: "查看文档", w: 150 });
+    tplAdd("stat", 700, 240, { w: 210, h: 96 });
+    tplAdd("stat", 940, 240, { w: 210, h: 96 });
+    tplAdd("carousel", 90, 470, { w: 1100, h: 240 });
+    renderStage(); renderLayers(); updateCount(); toast("已插入模板「着陆页」"); pushHistory();
+  }
+  function buildTplDashboard() {
+    tplAdd("sidebar", 0, 0, { w: 220, h: 720 });
+    tplAdd("text", 260, 24, { text: "数据看板", fontSize: 24, bold: true });
+    tplAdd("stat", 260, 84, { w: 230, h: 96 });
+    tplAdd("stat", 510, 84, { w: 230, h: 96 });
+    tplAdd("stat", 760, 84, { w: 230, h: 96 });
+    tplAdd("chart", 260, 210, { w: 500, h: 280 });
+    tplAdd("table", 790, 210, { w: 470, h: 280 });
+    renderStage(); renderLayers(); updateCount(); toast("已插入模板「看板页」"); pushHistory();
+  }
+  function buildTplShop() {
+    tplAdd("navbar", 0, 0, { w: 1280 });
+    tplAdd("notice", 60, 62, { w: 1160, h: 44 });
+    tplAdd("carousel", 60, 126, { w: 1160, h: 300 });
+    tplAdd("text", 100, 452, { text: "选择你的套餐", fontSize: 22, bold: true });
+    tplAdd("price", 100, 500, { w: 240, h: 240 });
+    tplAdd("price", 380, 500, { w: 240, h: 240, props: { title: "旗舰版", price: "199", featured: true } });
+    tplAdd("price", 660, 500, { w: 240, h: 240 });
+    renderStage(); renderLayers(); updateCount(); toast("已插入模板「电商页」"); pushHistory();
   }
 
   /* ---------- 画布设置 ---------- */
@@ -1724,7 +1890,7 @@
   function showAbout() {
     modal("关于 WebUI Studio",
       '<div style="text-align:center;padding:6px 0 2px;">'
-      + '<div style="font-size:20px;font-weight:700;color:#d7dbe1;">WebUI Studio v1.4.0</div>'
+      + '<div style="font-size:20px;font-weight:700;color:#d7dbe1;">WebUI Studio v1.5.0</div>'
       + '<div style="color:#8a8f98;margin-top:6px;">网页 UI 制作软件 · 拖拽式可视化设计</div>'
       + '<div style="color:#6b7180;margin-top:4px;">PySide6 + QWebEngineView</div>'
       + '</div>');

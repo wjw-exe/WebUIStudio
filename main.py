@@ -18,7 +18,7 @@ from PySide6.QtWebChannel import QWebChannel
 from PySide6.QtWebEngineWidgets import QWebEngineView
 
 APP_TITLE = "WebUI Studio"
-APP_VERSION = "1.4.0"
+APP_VERSION = "1.5.0"
 
 
 def resource_path(rel: str) -> str:
