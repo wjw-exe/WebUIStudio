@@ -35,7 +35,11 @@
     list: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#5b8cff" stroke-width="1.7"><path d="M8 6h13M8 12h13M8 18h13" stroke-linecap="round"/><circle cx="4.2" cy="6" r="1.4" fill="#5b8cff" stroke="none"/><circle cx="4.2" cy="12" r="1.4" fill="#5b8cff" stroke="none"/><circle cx="4.2" cy="18" r="1.4" fill="#5b8cff" stroke="none"/></svg>',
     rating: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#5b8cff" stroke-width="1.7" stroke-linejoin="round"><path d="m12 3 2.6 5.4 6 .7-4.5 4.2 1.2 5.9L12 16.4 6.7 19.2l1.2-5.9L3.4 9.1l6-.7Z"/><path d="M7 6.5l3.5-1" opacity=".45"/></svg>',
     search: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#5b8cff" stroke-width="1.7"><rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="10" cy="12" r="3.2"/><path d="m12.6 14.6 4 4" stroke-linecap="round"/></svg>',
-    navbar: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#5b8cff" stroke-width="1.7"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3 9h18" opacity=".5"/><circle cx="7" cy="7" r="1.1" fill="#5b8cff" stroke="none"/><path d="M12 13h6M12 16h4" stroke-linecap="round" opacity=".7"/></svg>'
+    navbar: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#5b8cff" stroke-width="1.7"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3 9h18" opacity=".5"/><circle cx="7" cy="7" r="1.1" fill="#5b8cff" stroke="none"/><path d="M12 13h6M12 16h4" stroke-linecap="round" opacity=".7"/></svg>',
+    steps: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#5b8cff" stroke-width="1.7"><circle cx="5" cy="12" r="2.2" fill="#5b8cff" stroke="none"/><circle cx="12" cy="12" r="2.2"/><circle cx="19" cy="12" r="2.2"/><path d="M7.4 12h3.2M14.4 12h3.2" opacity=".5"/></svg>',
+    timeline: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#5b8cff" stroke-width="1.7"><path d="M5 4v16" opacity=".45"/><circle cx="5" cy="7" r="2" fill="#5b8cff" stroke="none"/><circle cx="5" cy="13" r="2"/><circle cx="5" cy="19" r="2"/><path d="M9 7h10M9 13h8M9 19h11" stroke-linecap="round" opacity=".7"/></svg>',
+    footer: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#5b8cff" stroke-width="1.7"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 16h18M9 13h6M10 19h4" opacity=".6" stroke-linecap="round"/></svg>',
+    avatar: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#5b8cff" stroke-width="1.7"><circle cx="12" cy="9" r="3.4"/><path d="M5 19c1.2-3.2 4-4.6 7-4.6s5.8 1.4 7 4.6"/></svg>'
   };
 
   const TYPE_NAMES = {
@@ -44,7 +48,8 @@
     progress: "进度条", divider: "分割线", container: "容器", badge: "徽章",
     tabs: "标签页", card: "卡片", chart: "图表", table: "表格", video: "视频", date: "日期选择", modal: "弹窗",
     custom: "自定义 HTML",
-    list: "列表", rating: "评分", search: "搜索框", navbar: "导航栏"
+    list: "列表", rating: "评分", search: "搜索框", navbar: "导航栏",
+    steps: "步骤条", timeline: "时间线", footer: "页脚", avatar: "头像"
   };
 
   const DEFAULT_STYLE = () => ({
@@ -79,11 +84,15 @@
     list: () => ({ items: "苹果,香蕉,橙子", mark: "dot" }),
     rating: () => ({ value: 4, max: 5 }),
     search: () => ({ placeholder: "搜索关键词…", btnText: "搜索" }),
-    navbar: () => ({ brand: "Logo", links: "首页,产品,关于,联系" })
+    navbar: () => ({ brand: "Logo", links: "首页,产品,关于,联系" }),
+    steps: () => ({ items: "第一步,第二步,第三步", active: 1 }),
+    timeline: () => ({ items: "2026-01|发布 v1.0\n2026-06|新增 20+ 组件", dotColor: "#2f5cff" }),
+    footer: () => ({ text: "© 2026 WebUI Studio. All rights reserved.", links: "关于,隐私,条款" }),
+    avatar: () => ({ src: "", text: "U", shape: "circle" })
   };
 
-  const DEF_W = { button: 150, text: 180, switch: 90, input: 220, slider: 240, select: 180, checkbox: 140, radio: 140, image: 200, progress: 260, divider: 220, container: 320, badge: 70, tabs: 260, card: 260, chart: 360, table: 340, video: 360, date: 200, modal: 200, custom: 240, list: 220, rating: 180, search: 280, navbar: 600 };
-  const DEF_H = { button: 44, text: 32, switch: 34, input: 40, slider: 34, select: 40, checkbox: 30, radio: 30, image: 140, progress: 30, divider: 24, container: 200, badge: 28, tabs: 120, card: 180, chart: 200, table: 160, video: 200, date: 40, modal: 44, custom: 120, list: 150, rating: 36, search: 40, navbar: 48 };
+  const DEF_W = { button: 150, text: 180, switch: 90, input: 220, slider: 240, select: 180, checkbox: 140, radio: 140, image: 200, progress: 260, divider: 220, container: 320, badge: 70, tabs: 260, card: 260, chart: 360, table: 340, video: 360, date: 200, modal: 200, custom: 240, list: 220, rating: 180, search: 280, navbar: 600, steps: 380, timeline: 260, footer: 600, avatar: 56 };
+  const DEF_H = { button: 44, text: 32, switch: 34, input: 40, slider: 34, select: 40, checkbox: 30, radio: 30, image: 140, progress: 30, divider: 24, container: 200, badge: 28, tabs: 120, card: 180, chart: 200, table: 160, video: 200, date: 40, modal: 44, custom: 120, list: 150, rating: 36, search: 40, navbar: 48, steps: 52, timeline: 170, footer: 56, avatar: 56 };
 
   /* ---------- 状态 ---------- */
   const state = {
@@ -106,6 +115,8 @@
   let snap = true;
   let bridge = null;
   let editing = false;
+  let clipboardEls = null;
+  let clipboardGroups = [];
 
   const elById = id => state.elements.find(e => e.id === id);
   const selEl = () => elById(state.selectedId);
@@ -392,6 +403,43 @@
           + '<div class="wn-brand" style="color:' + st.textColor + ';font-size:' + Math.max(13, st.fontSize) + 'px;font-weight:700;">' + esc(p.brand || "Logo") + '</div>'
           + '<div class="wn-links">' + links.map((l, i) => '<a style="color:' + (i === 0 ? st.accentColor : st.textColor) + ';font-size:' + st.fontSize + 'px;">' + esc(l) + '</a>').join("") + '</div>'
           + '<div class="wn-cta" style="background:' + st.accentColor + ';border-radius:' + Math.max(2, st.radius - 3) + 'px;color:#fff;">按钮</div></div>';
+      }
+      case "steps": {
+        const items = String(p.items || "").split(",").map(s => s.trim()).filter(Boolean);
+        const active = Math.max(1, Math.min(items.length, parseInt(p.active, 10) || 1));
+        return '<div class="wuis-steps" style="color:' + st.textColor + ';">'
+          + items.map((t, i) => {
+            const done = i + 1 < active, cur = i + 1 === active;
+            return '<div class="ws-step" style="flex:' + (i < items.length - 1 ? 1 : "none") + ';">'
+              + '<div class="ws-sline"><span class="ws-sdot" style="background:' + (done || cur ? st.accentColor : bgc(st)) + ';border-color:' + st.accentColor + ';">' + (done ? "✓" : (cur ? '<b style="color:#fff;">' + (i + 1) + '</b>' : i + 1)) + '</span>'
+              + (i < items.length - 1 ? '<span class="ws-sbar" style="background:' + (done ? st.accentColor : st.borderColor) + ';"></span>' : '')
+              + '</div><span class="ws-stlabel" style="color:' + (cur ? st.accentColor : st.textColor) + ';font-size:' + st.fontSize + 'px;">' + esc(t) + '</span></div>';
+          }).join("")
+          + '</div>';
+      }
+      case "timeline": {
+        const rows = String(p.items || "").split("\n").map(s => s.trim()).filter(Boolean).map(s => {
+          const i = s.indexOf("|");
+          return i > -1 ? { t: s.slice(0, i).trim(), d: s.slice(i + 1).trim() } : { t: s, d: "" };
+        });
+        return '<div class="wuis-timeline" style="color:' + st.textColor + ';font-size:' + st.fontSize + 'px;">'
+          + rows.map(r => '<div class="wt-item"><div class="wt-line"><span class="wt-dot" style="background:' + p.dotColor + ';"></span></div><div class="wt-body"><span class="wt-time">' + esc(r.t) + '</span>' + (r.d ? '<span class="wt-desc" style="opacity:.65;">' + esc(r.d) + '</span>' : '') + '</div></div>').join("")
+          + '</div>';
+      }
+      case "footer": {
+        const links = String(p.links || "").split(",").map(s => s.trim()).filter(Boolean);
+        return '<div class="wuis-footer" style="background:' + bgc(st) + ';border-top:1px solid ' + st.borderColor + ';border-radius:' + st.radius + 'px;">'
+          + '<span style="color:' + st.textColor + ';font-size:' + st.fontSize + 'px;">' + esc(p.text || "") + '</span>'
+          + (links.length ? '<span class="wf-links">' + links.map(l => '<a style="color:' + st.accentColor + ';font-size:' + Math.max(11, st.fontSize - 2) + 'px;">' + esc(l) + '</a>').join("") + '</span>' : '')
+          + '</div>';
+      }
+      case "avatar": {
+        const size = Math.max(16, parseInt(st.width, 10) || 56);
+        const shape = p.shape === "square" ? Math.max(4, st.radius) + "px" : "50%";
+        const inner = p.src
+          ? '<img src="' + esc(p.src) + '" alt="" style="width:100%;height:100%;object-fit:cover;">'
+          : '<span style="font-size:' + Math.round(size * 0.42) + 'px;font-weight:600;">' + esc(p.text || "U") + '</span>';
+        return '<div class="wuis-avatar" style="width:' + size + 'px;height:' + size + 'px;border-radius:' + shape + ';background:' + st.accentColor + ';color:#fff;">' + inner + '</div>';
       }
     }
     return "";
@@ -838,6 +886,24 @@
         h += textRow("品牌名", "brand", p.brand);
         h += textRow("链接（逗号分隔）", "links", p.links);
         break;
+      case "steps":
+        h += textRow("步骤（逗号分隔）", "items", p.items);
+        h += numRowP("当前步骤", "active", p.active, 1, 100);
+        break;
+      case "timeline":
+        h += textAreaRow("时间线（每行：时间|描述）", "items", p.items);
+        h += colorRowP("节点颜色", "dotColor", p.dotColor);
+        break;
+      case "footer":
+        h += textRow("页脚文字", "text", p.text);
+        h += textRow("链接（逗号分隔）", "links", p.links);
+        break;
+      case "avatar":
+        h += textRow("图片 URL（留空用文字）", "src", p.src);
+        h += textRow("文字", "text", p.text);
+        h += '<div class="prop"><label>形状</label><select data-p="shape">'
+          + opt("circle", "圆形", p.shape) + opt("square", "圆角方形", p.shape) + '</select></div>';
+        break;
     }
     return h;
   }
@@ -857,10 +923,18 @@
     return '<div class="prop"><label>' + label + '</label><input type="text" data-p="' + key + '"></div>';
   }
   function colorRow(label, key, val) {
-    return '<div class="prop"><label>' + label + '</label><input type="color" data-s="' + key + '"><input type="text" class="hex" data-s="' + key + '-hex"></div>';
+    return '<div class="prop"><label>' + label + '</label><input type="color" data-s="' + key + '"><input type="text" class="hex" data-s="' + key + '-hex"></div>'
+      + swatchRow(key, "s");
   }
   function colorRowP(label, key, val) {
-    return '<div class="prop"><label>' + label + '</label><input type="color" data-p="' + key + '"><input type="text" class="hex" data-p="' + key + '-hex"></div>';
+    return '<div class="prop"><label>' + label + '</label><input type="color" data-p="' + key + '"><input type="text" class="hex" data-p="' + key + '-hex"></div>'
+      + swatchRow(key, "p");
+  }
+  function swatchRow(key, kind) {
+    const SWATCHES = ["#2f5cff", "#0b1f66", "#7c3aed", "#db2777", "#e11d48", "#f97316", "#f59e0b", "#10b981", "#059669", "#0ea5e9", "#64748b", "#1e293b"];
+    return '<div class="swatches" data-swatch-kind="' + kind + '" data-swatch="' + key + '">'
+      + SWATCHES.map(c => '<span class="swatch" data-c="' + c + '" style="background:' + c + ';"></span>').join("")
+      + '</div>';
   }
   function rangeRow(label, key, val, min, max) {
     return '<div class="prop"><label>' + label + '</label><input type="range" data-s="' + key + '" min="' + min + '" max="' + max + '"><span class="range-val"></span></div>';
@@ -974,6 +1048,30 @@
         if (inp.dataset.p) el.props[inp.dataset.p.replace("-hex", "")] = v;
         renderElementOnly(el);
         markDirty(true);
+      });
+    });
+    ip.querySelectorAll("[data-swatch]").forEach(w => {
+      const kind = w.dataset.swatchKind, key = w.dataset.swatch;
+      w.querySelectorAll(".swatch").forEach(s => {
+        s.addEventListener("click", () => {
+          const color = s.dataset.c;
+          if (kind === "s") {
+            el.style[key] = color;
+            const c = ip.querySelector('input[type=color][data-s="' + key + '"]');
+            if (c) c.value = color;
+            const hex = ip.querySelector('input[data-s="' + key + '-hex"]');
+            if (hex) hex.value = color;
+            applyStyleToDom(el);
+          } else {
+            el.props[key] = color;
+            const c = ip.querySelector('input[type=color][data-p="' + key + '"]');
+            if (c) c.value = color;
+            const hex = ip.querySelector('input[data-p="' + key + '-hex"]');
+            if (hex) hex.value = color;
+            renderElementOnly(el);
+          }
+          markDirty(true);
+        });
       });
     });
     ip.querySelectorAll("input[type=range][data-s]").forEach(r => {
@@ -1264,6 +1362,47 @@
     renderStage(); renderLayers(); renderInspector(); updateCount(); pushHistory();
   }
 
+  function copySel() {
+    const list = selList(); if (!list.length) return;
+    clipboardEls = JSON.parse(JSON.stringify(list));
+    clipboardGroups = state.groups.filter(g => g.ids.some(id => list.some(e => e.id === id))).map(g => ({ ...g, ids: g.ids.filter(id => list.some(e => e.id === id)) }));
+    toast("已复制 " + clipboardEls.length + " 个元素");
+  }
+
+  function cutSel() {
+    const list = selList(); if (!list.length) return;
+    copySel();
+    delSelected();
+  }
+
+  function pasteClip() {
+    if (!clipboardEls || !clipboardEls.length) return;
+    const map = {};
+    const news = clipboardEls.map(el => {
+      const cp = JSON.parse(JSON.stringify(el));
+      const oldId = cp.id;
+      cp.id = genId();
+      map[oldId] = cp.id;
+      cp.x += 20; cp.y += 20;
+      return cp;
+    });
+    clipboardGroups.forEach(g => {
+      state.groups.push({ id: g.id, name: g.name, ids: g.ids.map(id => map[id]).filter(Boolean) });
+    });
+    state.elements.push(...news);
+    state.selectedId = news[news.length - 1].id; state.sel.clear();
+    renderStage(); renderLayers(); renderInspector(); updateCount(); pushHistory();
+    toast("已粘贴 " + news.length + " 个元素");
+  }
+
+  function nudgeSel(key, step) {
+    const list = selList(); if (!list.length) return;
+    const dx = key === "ArrowLeft" ? -step : key === "ArrowRight" ? step : 0;
+    const dy = key === "ArrowUp" ? -step : key === "ArrowDown" ? step : 0;
+    list.forEach(el => { el.x += dx; el.y += dy; });
+    renderStage(); renderLayers(); renderInspector(); updateSelInfo(); pushHistory();
+  }
+
   function zTop() {
     const el = selEl(); if (!el) return;
     const zMax = state.elements.reduce((m, e) => Math.max(m, e.style.z || 0), 0);
@@ -1314,6 +1453,8 @@
       { type: "modal", name: "弹窗" },
       { type: "list", name: "列表" }, { type: "rating", name: "评分" },
       { type: "search", name: "搜索框" }, { type: "navbar", name: "导航栏", wide: true },
+      { type: "steps", name: "步骤条" }, { type: "timeline", name: "时间线" },
+      { type: "footer", name: "页脚", wide: true }, { type: "avatar", name: "头像" },
       { type: "custom", name: "自定义 HTML", wide: true }
     ];
     grid.innerHTML = "";
@@ -1583,7 +1724,7 @@
   function showAbout() {
     modal("关于 WebUI Studio",
       '<div style="text-align:center;padding:6px 0 2px;">'
-      + '<div style="font-size:20px;font-weight:700;color:#d7dbe1;">WebUI Studio v1.3.0</div>'
+      + '<div style="font-size:20px;font-weight:700;color:#d7dbe1;">WebUI Studio v1.4.0</div>'
       + '<div style="color:#8a8f98;margin-top:6px;">网页 UI 制作软件 · 拖拽式可视化设计</div>'
       + '<div style="color:#6b7180;margin-top:4px;">PySide6 + QWebEngineView</div>'
       + '</div>');
@@ -1979,6 +2120,9 @@
       }
       if (mod && e.key === "z") { e.preventDefault(); undo(); }
       else if (mod && e.key === "y") { e.preventDefault(); redo(); }
+      else if (mod && e.key === "c") { e.preventDefault(); copySel(); }
+      else if (mod && e.key === "x") { e.preventDefault(); cutSel(); }
+      else if (mod && e.key === "v") { e.preventDefault(); pasteClip(); }
       else if (e.key === "v" || e.key === "V") { switchTool("move"); }
       else if (e.key === "b" || e.key === "B") { switchTool("paint"); }
       else if (mod && e.shiftKey && e.key === "g") { e.preventDefault(); action("ungroup"); }
@@ -1996,6 +2140,11 @@
       else if (e.key === "Delete" || e.key === "Backspace") {
         if (e.target.closest && e.target.closest("input, textarea, [contenteditable]")) return;
         e.preventDefault(); delSelected();
+      }
+      else if (e.key === "ArrowUp" || e.key === "ArrowDown" || e.key === "ArrowLeft" || e.key === "ArrowRight") {
+        if (e.target.closest && e.target.closest("input, textarea, [contenteditable]")) return;
+        e.preventDefault();
+        nudgeSel(e.key, e.shiftKey ? 10 : 1);
       }
       else if (e.key === "F5") { e.preventDefault(); doPreview(); }
       else if (e.key === "F1") { e.preventDefault(); showHelp(); }

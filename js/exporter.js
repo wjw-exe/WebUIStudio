@@ -150,6 +150,40 @@ const WUIS_EXPORTER = (function () {
         const links = items.map((it, i) => '<a class="wn-link' + (i === 0 ? " on" : "") + '" href="javascript:;">' + esc(it) + "</a>").join("");
         return '<div class="wuis-navbar" style="background:' + (st.bgGradient || st.bgColor || "#1f2937") + ";color:" + st.textColor + ";" + fontF + '"><span class="wn-brand">' + esc(p.brand || "LOGO") + '</span><div class="wn-links">' + links + '</div><span class="wn-cta" style="background:' + (st.accentColor || "#4f8cff") + '">' + esc(p.btnText || "按钮") + "</span></div>";
       }
+      case "steps": {
+        const items = String(p.items || "第一步,第二步,第三步").split(",").map(s => s.trim()).filter(Boolean);
+        const act = Math.max(1, Math.min(items.length, parseInt(p.active, 10) || 1));
+        const col = st.accentColor || "#4f8cff";
+        return '<div class="wuis-steps" style="color:' + st.textColor + ";" + fontF + '">'
+          + items.map((t, i) => {
+            const done = i + 1 < act, cur = i + 1 === act;
+            return '<div class="ws-step" style="flex:' + (i < items.length - 1 ? 1 : "none") + ';"><div class="ws-sline"><span class="ws-sdot" style="background:' + (done || cur ? col : "#e4e8ee") + ";border-color:" + col + ';">' + (done ? "✓" : (cur ? "<b>" + (i + 1) + "</b>" : i + 1)) + '</span><span class="ws-sbar" style="background:' + (done ? col : "#d5dae3") + ';"></span></div><span class="ws-stlabel" style="color:' + (cur ? col : st.textColor) + ';">' + esc(t) + "</span></div>";
+          }).join("")
+          + "</div>";
+      }
+      case "timeline": {
+        const rows = String(p.items || "2026-01|发布 v1.0\n2026-06|新增 20+ 组件").split("\n").map(s => s.trim()).filter(Boolean).map(s => {
+          const i = s.indexOf("|");
+          return i > -1 ? { t: s.slice(0, i).trim(), d: s.slice(i + 1).trim() } : { t: s, d: "" };
+        });
+        const dc = p.dotColor || "#4f8cff";
+        return '<div class="wuis-timeline" style="color:' + st.textColor + ";" + fontF + '">'
+          + rows.map(r => '<div class="wt-item"><div class="wt-line"><span class="wt-dot" style="background:' + dc + ';"></span></div><div class="wt-body"><span class="wt-time">' + esc(r.t) + '</span>' + (r.d ? '<span class="wt-desc">' + esc(r.d) + "</span>" : "") + "</div></div>").join("")
+          + "</div>";
+      }
+      case "footer": {
+        const items = String(p.links || "关于,隐私,条款").split(",").map(s => s.trim()).filter(Boolean);
+        const links = items.map(it => '<a class="wf-link" href="javascript:;">' + esc(it) + "</a>").join("");
+        return '<div class="wuis-footer" style="background:' + (st.bgGradient || st.bgColor || "#f4f6f9") + ";border-top:1px solid " + st.borderColor + ";color:" + st.textColor + ";" + fontF + '"><span>' + esc(p.text || "© 2026 WebUI Studio") + '</span><span class="wf-links">' + links + "</span></div>";
+      }
+      case "avatar": {
+        const size = Math.max(16, parseInt(w, 10) || 56);
+        const shape = p.shape === "square" ? (st.radius || 8) + "px" : "50%";
+        const inner = p.src
+          ? '<img src="' + esc(p.src) + '" alt="">'
+          : '<span style="font-size:' + Math.round(size * 0.4) + "px\">" + esc(p.text || "U") + "</span>";
+        return '<div class="wuis-avatar" style="width:' + size + "px;height:" + size + "px;border-radius:" + shape + ";background:" + (st.accentColor || "#4f8cff") + ';">' + inner + "</div>";
+      }
       case "custom": {
         return p.html || "";
       }
@@ -323,6 +357,26 @@ body{min-height:100vh;background:#eef0f4;font-family:"Segoe UI","Microsoft YaHei
 .wn-link:hover{background:rgba(255,255,255,.14);color:#fff}
 .wn-link.on{background:rgba(255,255,255,.18);color:#fff;font-weight:600}
 .wn-cta{margin-left:auto;padding:6px 14px;font-size:12.5px;color:#fff;border-radius:6px;flex-shrink:0;font-weight:600;line-height:1.4}
+.wuis-steps{width:100%;height:100%;display:flex;align-items:center;justify-content:center;gap:0}
+.wuis-steps .ws-step{display:flex;flex-direction:column;align-items:center;min-width:0}
+.wuis-steps .ws-sline{display:flex;align-items:center;width:100%}
+.wuis-steps .ws-sdot{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;border:2px solid;font-size:12.5px;font-weight:600;flex-shrink:0}
+.wuis-steps .ws-sdot b{color:#fff}
+.wuis-steps .ws-sbar{flex:1;height:3px;min-width:14px;border-radius:2px}
+.wuis-steps .ws-stlabel{margin-top:6px;font-size:12px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.wuis-timeline{width:100%;height:100%;display:flex;flex-direction:column;gap:0;padding:6px 4px;overflow:auto}
+.wt-item{display:flex;gap:0;min-height:44px}
+.wt-line{display:flex;flex-direction:column;align-items:center;width:24px;flex-shrink:0}
+.wt-dot{width:11px;height:11px;border-radius:50%;margin-top:5px;flex-shrink:0;box-shadow:0 0 0 3px rgba(79,140,255,.15)}
+.wt-item:not(:last-child) .wt-line::after{content:"";flex:1;width:2px;background:#dfe4ea;margin-top:3px}
+.wt-body{flex:1;padding:1px 2px 14px 10px;display:flex;flex-direction:column;gap:3px;min-width:0}
+.wt-time{font-size:13px;font-weight:600;color:inherit}
+.wt-desc{font-size:11.5px;opacity:.6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wuis-footer{width:100%;height:100%;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:0 20px;font-size:12.5px}
+.wf-links{display:flex;gap:12px}
+.wf-link{font-size:12px;text-decoration:none;color:#2f6bff;cursor:pointer;white-space:nowrap}
+.wuis-avatar{display:flex;align-items:center;justify-content:center;overflow:hidden;color:#fff;font-weight:600;flex-shrink:0}
+.wuis-avatar img{width:100%;height:100%;object-fit:cover;display:block}
 .wuis-modal{width:100%;height:100%;display:flex;align-items:center;justify-content:center}
 .wuis-modal .wm-btn{padding:10px 24px;background:#2f5cff;color:#fff;border:none;border-radius:7px;font-size:13.5px;font-weight:500;cursor:pointer}
 .wuis-modal .wm-btn:hover{filter:brightness(1.08)}
