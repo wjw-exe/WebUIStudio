@@ -14,7 +14,7 @@
     <div class="brand">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="4" stroke="#5b8cff" stroke-width="2"/><path d="M8 12h8M12 8v8" stroke="#5b8cff" stroke-width="2" stroke-linecap="round"/></svg>
       <span>WebUI Studio</span>
-      <em>v1.2</em>
+      <em>v1.3</em>
     </div>
 <div id="toolbar">
       <button class="tb tool-btn active" id="tb-tool-move" title="移动工具 V"><svg viewBox="0 0 24 24"><path d="M12 3v18M3 12h18"/><path d="m8 8 4-4 4 4M8 16l4 4 4-4"/></svg></button>
@@ -62,11 +62,17 @@
       <div id="left-panels">
         <section id="panel-components" class="panel">
           <div class="panel-head">组件库 <span class="hint">点击或拖入画布</span></div>
+          <div id="palette-search"><input id="palette-filter" type="text" placeholder="🔍 搜索组件…"></div>
           <div id="palette-grid"></div>
+          <div id="template-block">
+            <div class="panel-head sub">模板 <span class="hint">一键插入</span></div>
+            <div id="template-grid"></div>
+          </div>
           <div class="panel-tip">
             双击画布中的<b>文字</b>可直接编辑<br>
             选中后拖动 <b>8 个手柄</b> 可缩放<br>
-            <b>Shift+点击</b> 可多选
+            <b>Shift+点击</b> 可多选<br>
+            选中多个元素后右键可<b>组合</b>
           </div>
         </section>
 
@@ -81,6 +87,7 @@
             <button id="page-add" class="btn-mini primary">＋ 添加页面</button>
           </div>
           <div id="page-list"></div>
+          <div class="panel-tip-sub">双击页面名称可重命名</div>
           <div class="panel-tip">一个项目可包含多个页面。导出 HTML 后自动生成顶部页面导航，点击即可切换页面。</div>
         </section>
 
@@ -148,8 +155,11 @@
   <div class="sep"></div>
   <div class="mi" data-cmd="duplicate-multi">多重复制</div>
   <div class="sep"></div>
-  <div class="mi" data-cmd="group">组合</div>
-  <div class="mi" data-cmd="ungroup">取消组合</div>
+  <div class="mi" data-cmd="group">组合 <kbd>Ctrl+G</kbd></div>
+  <div class="mi" data-cmd="ungroup">取消组合 <kbd>Ctrl+Shift+G</kbd></div>
+  <div class="sep"></div>
+  <div class="mi" data-cmd="center-h">水平居中于画布</div>
+  <div class="mi" data-cmd="center-v">垂直居中于画布</div>
   <div class="mi" data-cmd="lockSel">锁定</div>
   <div class="mi" data-cmd="unlockSel">解锁</div>
   <div class="mi" data-cmd="hideSel">隐藏</div>

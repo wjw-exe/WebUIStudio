@@ -129,6 +129,27 @@ const WUIS_EXPORTER = (function () {
         return '<div class="wuis-modal"><button class="wm-btn" style="background:' + (st.bgGradient || st.bgColor || "#2f5cff") + ";border-radius:" + st.radius + 'px;">' + esc(p.btnText || "打开弹窗") + '</button></div>'
           + '<div class="wuis-modal-pop"><div class="wmp-box"><div class="wmp-title">' + esc(p.title || "弹窗标题") + '</div><div class="wmp-body">' + esc(p.content || "弹窗内容") + '</div><div class="wmp-foot"><button class="wmp-close">关闭</button></div></div></div>';
       }
+      case "list": {
+        const items = String(p.items || "列表项一,列表项二,列表项三").split(/[\n,]/).map(s => s.trim()).filter(Boolean);
+        const m = { dot: "•", num: "1", check: "✓" }[p.mark] || "•";
+        return '<div class="wuis-list" style="' + fontF + '"><ul class="wl-ul">' + items.map(it => '<li><span class="wl-mark">' + m + '</span>' + esc(it) + "</li>").join("") + "</ul></div>";
+      }
+      case "rating": {
+        const n = Math.min(10, Math.max(1, p.max || 5));
+        const v = Math.max(0, Math.min(n, p.value || 3));
+        let s = '<div class="wuis-rating" style="' + fontF + '">';
+        for (let i = 1; i <= n; i++) s += '<span class="wr-star' + (i <= v ? " on" : "") + '">★</span>';
+        s += '<span class="wr-val">' + v + "/" + n + "</span></div>";
+        return s;
+      }
+      case "search": {
+        return '<div class="wuis-search" style="' + fontF + '"><input class="ws-input" type="text" placeholder="' + esc(p.placeholder || "搜索…") + '" value=""><button class="ws-btn" style="background:' + (st.bgGradient || st.bgColor || "#2f5cff") + '">搜索</button></div>';
+      }
+      case "navbar": {
+        const items = String(p.links || "首页,产品,关于").split(",").map(s => s.trim()).filter(Boolean);
+        const links = items.map((it, i) => '<a class="wn-link' + (i === 0 ? " on" : "") + '" href="javascript:;">' + esc(it) + "</a>").join("");
+        return '<div class="wuis-navbar" style="background:' + (st.bgGradient || st.bgColor || "#1f2937") + ";color:" + st.textColor + ";" + fontF + '"><span class="wn-brand">' + esc(p.brand || "LOGO") + '</span><div class="wn-links">' + links + '</div><span class="wn-cta" style="background:' + (st.accentColor || "#4f8cff") + '">' + esc(p.btnText || "按钮") + "</span></div>";
+      }
       case "custom": {
         return p.html || "";
       }
@@ -280,6 +301,28 @@ body{min-height:100vh;background:#eef0f4;font-family:"Segoe UI","Microsoft YaHei
 .wuis-video .vd-ph b{color:#c2c7cf;display:block;font-size:13px}
 .wuis-date{width:100%;height:100%;border:1.5px solid #c9ced6;border-radius:8px;padding:0 12px;font-size:14px;outline:none;background:#fff;color:#222}
 .wuis-date:focus{border-color:#4f8cff;box-shadow:0 0 0 3px rgba(79,140,255,.18)}
+.wuis-list{width:100%;height:100%;background:#fff;border:1px solid #dfe4ea;border-radius:8px;overflow:auto}
+.wuis-list .wl-ul{list-style:none;padding:8px 6px;margin:0}
+.wuis-list li{display:flex;align-items:center;gap:9px;padding:8px 10px;font-size:13.5px;color:#333;border-bottom:1px solid #eef1f5}
+.wuis-list li:last-child{border-bottom:none}
+.wl-mark{color:#4f8cff;flex-shrink:0;font-size:12px}
+.wl-num{display:inline-flex;align-items:center;justify-content:center;min-width:16px;height:16px;border-radius:50%;background:#eef4ff;color:#1f6bff;font-size:10.5px;flex-shrink:0}
+.wuis-rating{width:100%;height:100%;display:flex;align-items:center;gap:4px;background:#fff;border:1px solid #eef1f5;border-radius:8px;padding:0 10px}
+.wr-star{font-size:20px;color:#d5dbe3;line-height:1}
+.wr-star.on{color:#f5a623}
+.wr-val{margin-left:8px;font-size:12.5px;color:#8a8f98;font-variant-numeric:tabular-nums}
+.wuis-search{width:100%;height:100%;display:flex;align-items:center;gap:8px;background:#fff}
+.ws-input{flex:1;height:34px;border:1.5px solid #c9ced6;border-radius:8px;padding:0 12px;font-size:14px;outline:none;background:#fff;color:#222;min-width:0}
+.ws-input:focus{border-color:#4f8cff;box-shadow:0 0 0 3px rgba(79,140,255,.18)}
+.ws-btn{height:34px;padding:0 16px;border:none;border-radius:8px;color:#fff;font-size:13.5px;cursor:pointer;white-space:nowrap;flex-shrink:0}
+.ws-btn:hover{filter:brightness(1.08)}
+.wuis-navbar{width:100%;height:100%;display:flex;align-items:center;gap:22px;padding:0 22px;border-radius:8px}
+.wn-brand{font-size:15px;font-weight:700;letter-spacing:.5px;flex-shrink:0}
+.wn-links{display:flex;gap:2px;flex:1;min-width:0;overflow:hidden}
+.wn-link{padding:6px 12px;font-size:13px;color:rgba(255,255,255,.82);text-decoration:none;border-radius:6px;white-space:nowrap;cursor:pointer}
+.wn-link:hover{background:rgba(255,255,255,.14);color:#fff}
+.wn-link.on{background:rgba(255,255,255,.18);color:#fff;font-weight:600}
+.wn-cta{margin-left:auto;padding:6px 14px;font-size:12.5px;color:#fff;border-radius:6px;flex-shrink:0;font-weight:600;line-height:1.4}
 .wuis-modal{width:100%;height:100%;display:flex;align-items:center;justify-content:center}
 .wuis-modal .wm-btn{padding:10px 24px;background:#2f5cff;color:#fff;border:none;border-radius:7px;font-size:13.5px;font-weight:500;cursor:pointer}
 .wuis-modal .wm-btn:hover{filter:brightness(1.08)}
