@@ -14,7 +14,7 @@
     <div class="brand">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="4" stroke="#5b8cff" stroke-width="2"/><path d="M8 12h8M12 8v8" stroke="#5b8cff" stroke-width="2" stroke-linecap="round"/></svg>
       <span>WebUI Studio</span>
-      <em>v1.1</em>
+      <em>v1.2</em>
     </div>
 <div id="toolbar">
       <button class="tb tool-btn active" id="tb-tool-move" title="移动工具 V"><svg viewBox="0 0 24 24"><path d="M12 3v18M3 12h18"/><path d="m8 8 4-4 4 4M8 16l4 4 4-4"/></svg></button>
@@ -101,7 +101,11 @@
           <div class="prop">
             <label>显示网格</label><label class="mini-switch"><input type="checkbox" id="cv-grid" checked><span></span></label>
           </div>
-          <div class="panel-tip">画布尺寸将作为导出页面的视口尺寸。</div>
+          <div class="prop block">
+            <label>全局 CSS</label>
+            <textarea id="cv-css" rows="5" spellcheck="false" placeholder="自定义样式代码，实时应用于画布并在导出时保留：&#10;.my-btn:hover { opacity: .85; }&#10;@keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }"></textarea>
+          </div>
+          <div class="panel-tip">全局 CSS 可定义组件 class 的样式、动画与媒体查询，导出 HTML 时一并保留。</div>
         </section>
       </div>
     </aside>

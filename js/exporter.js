@@ -129,6 +129,9 @@ const WUIS_EXPORTER = (function () {
         return '<div class="wuis-modal"><button class="wm-btn" style="background:' + (st.bgGradient || st.bgColor || "#2f5cff") + ";border-radius:" + st.radius + 'px;">' + esc(p.btnText || "打开弹窗") + '</button></div>'
           + '<div class="wuis-modal-pop"><div class="wmp-box"><div class="wmp-title">' + esc(p.title || "弹窗标题") + '</div><div class="wmp-body">' + esc(p.content || "弹窗内容") + '</div><div class="wmp-foot"><button class="wmp-close">关闭</button></div></div></div>';
       }
+      case "custom": {
+        return p.html || "";
+      }
       default:
         return "";
     }
@@ -185,6 +188,11 @@ const WUIS_EXPORTER = (function () {
     return '<svg viewBox="0 0 ' + W + " " + H + '" preserveAspectRatio="xMidYMid meet"><g>' + grid + bars + "</g></svg>";
   }
 
+  /* 单元素导出节点 */
+  function attrNameOK(k) {
+    return /^[a-zA-Z_:][a-zA-Z0-9_.:-]*$/.test(k);
+  }
+
   /* 单个元素导出节点 */
   function buildEl(el) {
     const st = el.style || {};
@@ -193,12 +201,23 @@ const WUIS_EXPORTER = (function () {
     if (st.bgGradient && el.type !== "button" && el.type !== "badge" && el.type !== "container" && el.type !== "modal") extra += "background:" + st.bgGradient + ";";
     if (st.shadow && st.shadow !== "none") extra += "box-shadow:" + st.shadow + ";";
     if (st.fontFamily) extra += "font-family:" + st.fontFamily + ";";
+    if (st.inlineCss) extra += String(st.inlineCss) + ";";
     const anim = (el.props && el.props.showAnimation && el.props.showAnimation !== "none") ? ' data-anim="' + esc(el.props.showAnimation) + '"' : "";
     const adur = (el.props && el.props.showAnimation !== "none" && el.props.animDuration) ? ' style="--anim-dur:' + el.props.animDuration + "ms\"" : "";
     const act = (el.props && el.props.clickAction && el.props.clickAction !== "none") ? ' data-action="' + esc(el.props.clickAction) + '"' : "";
     const tgt = (el.props && (el.props.clickAction === "link" || el.props.clickAction === "page" || el.props.clickAction === "toggle") && el.props.clickTarget) ? ' data-target="' + esc(el.props.clickTarget) + '"' : "";
-    const hidden = (el.visible === false) ? ' style="display:none;"' : "";
-    return '<div class="wuis-ct el" data-el-id="' + esc(el.id) + '" data-type="' + esc(el.type) + '"' + act + tgt + anim + ' style="' + common + ";" + extra + '">' + innerHTML(el.type, el.props, st, el.w, el.h) + "</div>" + (hidden ? "" : "");
+    const hidden = (el.visible === false) ? "display:none;" : "";
+    const cls = "wuis-ct el" + (el.cls ? " " + String(el.cls) : "");
+    let attrs = "";
+    if (el.attrs) {
+      Object.keys(el.attrs).forEach(k => {
+        if (k && k !== "class" && k !== "style" && k !== "data-el-id" && attrNameOK(k)) {
+          attrs += " " + k + '="' + esc(el.attrs[k]) + '"';
+        }
+      });
+    }
+    const inner = el.overrideHtml ? String(el.overrideHtml) : innerHTML(el.type, el.props, st, el.w, el.h);
+    return '<div class="' + cls + '" data-el-id="' + esc(el.id) + '" data-type="' + esc(el.type) + '"' + act + tgt + anim + attrs + ' style="' + common + ";" + extra + hidden + '">' + inner + "</div>";
   }
 
   const EXPORT_CSS = `*{margin:0;padding:0;box-sizing:border-box}
@@ -363,7 +382,18 @@ if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded'
 
     const navHtml = multi ? '<div class="wuis-nav">' + pages.map((pg, i) => '<button class="' + (i === 0 ? "on" : "") + '">' + esc(pg.name || ("页面 " + (i + 1))) + "</button>").join("") + "</div>" : "";
 
-    return "<!DOCTYPE html>\n<html lang=\"zh-CN\">\n<head>\n<meta charset=\"UTF-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n<title>" + esc(state.title || "WebUI Studio 导出页面") + "</title>\n<style>\n" + EXPORT_CSS + "\n</style>\n</head>\n<body>\n  " + navHtml + '\n  <div class="wuis-pages">\n' + pageHtml + "\n  </div>\n<script>\n" + RUNTIME + "\n</script>\n</body>\n</html>";
+    /* 全局自定义 CSS + 各组件 hover 规则 */
+    let extraCss = "";
+    if (state.css) extraCss += "\n" + String(state.css);
+    const allEls = pages.reduce((a, p) => a.concat(p.elements || []), []);
+    allEls.forEach(el => {
+      if (el.style && el.style.hoverCss) {
+        extraCss += '\n.el[data-el-id="' + esc(el.id) + '"]:hover{' + String(el.style.hoverCss) + "}";
+      }
+    });
+    if (extraCss) extraCss += "\n";
+
+    return "<!DOCTYPE html>\n<html lang=\"zh-CN\">\n<head>\n<meta charset=\"UTF-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n<title>" + esc(state.title || "WebUI Studio 导出页面") + "</title>\n<style>\n" + EXPORT_CSS + extraCss + "</style>\n</head>\n<body>\n  " + navHtml + '\n  <div class="wuis-pages">\n' + pageHtml + "\n  </div>\n<script>\n" + RUNTIME + "\n</script>\n</body>\n</html>";
   }
 
   return { exportHTML: exportHTML };

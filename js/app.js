@@ -30,14 +30,16 @@
     table: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#5b8cff" stroke-width="1.7"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 10h18M3 15h18M10 4v16"/></svg>',
     video: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#5b8cff" stroke-width="1.7"><rect x="3" y="5" width="14" height="14" rx="3"/><path d="m20 10 2-1.5v7L20 14" stroke-linejoin="round"/></svg>',
     date: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#5b8cff" stroke-width="1.7"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 9h18M8 3v4M16 3v4" stroke-linecap="round"/></svg>',
-    modal: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#5b8cff" stroke-width="1.7"><rect x="4" y="3" width="16" height="18" rx="3"/><path d="M4 9h16M9 3v6"/></svg>'
+    modal: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#5b8cff" stroke-width="1.7"><rect x="4" y="3" width="16" height="18" rx="3"/><path d="M4 9h16M9 3v6"/></svg>',
+    custom: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#5b8cff" stroke-width="1.7" stroke-linejoin="round"><path d="m9.5 4 7 8-5 8M15.5 4l-7 8 1 3"/></svg>'
   };
 
   const TYPE_NAMES = {
     button: "按钮", text: "文字", switch: "开关", input: "输入框", slider: "滑块",
     select: "下拉框", checkbox: "复选框", radio: "单选", image: "图片",
     progress: "进度条", divider: "分割线", container: "容器", badge: "徽章",
-    tabs: "标签页", card: "卡片", chart: "图表", table: "表格", video: "视频", date: "日期选择", modal: "弹窗"
+    tabs: "标签页", card: "卡片", chart: "图表", table: "表格", video: "视频", date: "日期选择", modal: "弹窗",
+    custom: "自定义 HTML"
   };
 
   const DEFAULT_STYLE = () => ({
@@ -67,11 +69,12 @@
     table: () => ({ rows: "标题|数量|价格\n苹果|3|15\n香蕉|5|20" }),
     video: () => ({ src: "", poster: "" }),
     date: () => ({ value: "", placeholder: "选择日期" }),
-    modal: () => ({ btnText: "打开弹窗", title: "弹窗标题", content: "弹窗内容，点击关闭按钮可关闭。" })
+    modal: () => ({ btnText: "打开弹窗", title: "弹窗标题", content: "弹窗内容，点击关闭按钮可关闭。" }),
+    custom: () => ({ html: '<div style="padding:12px;border:1px dashed #9aa0b0;border-radius:6px;font-size:13px;color:#555;">自定义 HTML 组件<br>选中后在属性面板「自定义」分组编辑原始代码</div>' })
   };
 
-  const DEF_W = { button: 150, text: 180, switch: 90, input: 220, slider: 240, select: 180, checkbox: 140, radio: 140, image: 200, progress: 260, divider: 220, container: 320, badge: 70, tabs: 260, card: 260, chart: 360, table: 340, video: 360, date: 200, modal: 200 };
-  const DEF_H = { button: 44, text: 32, switch: 34, input: 40, slider: 34, select: 40, checkbox: 30, radio: 30, image: 140, progress: 30, divider: 24, container: 200, badge: 28, tabs: 120, card: 180, chart: 200, table: 160, video: 200, date: 40, modal: 44 };
+  const DEF_W = { button: 150, text: 180, switch: 90, input: 220, slider: 240, select: 180, checkbox: 140, radio: 140, image: 200, progress: 260, divider: 220, container: 320, badge: 70, tabs: 260, card: 260, chart: 360, table: 340, video: 360, date: 200, modal: 200, custom: 240 };
+  const DEF_H = { button: 44, text: 32, switch: 34, input: 40, slider: 34, select: 40, checkbox: 30, radio: 30, image: 140, progress: 30, divider: 24, container: 200, badge: 28, tabs: 120, card: 180, chart: 200, table: 160, video: 200, date: 40, modal: 44, custom: 120 };
 
   /* ---------- 状态 ---------- */
   const state = {
@@ -81,6 +84,7 @@
     pages: [],
     pageIdx: 0,
     elements: [],
+    css: "",
     selectedId: null,
     sel: new Set(),
     tool: "move" /* move=移动工具  paint=画笔工具 */
@@ -106,6 +110,7 @@
       id: genId(), type, x, y,
       w: DEF_W[type], h: DEF_H[type],
       visible: true, locked: false,
+      cls: "", attrs: {}, overrideHtml: "",
       props: DEFAULT_PROPS[type](),
       style: st
     };
@@ -169,13 +174,38 @@
       if (!el.visible) return;
       st.appendChild(renderEl(el));
     });
+    applyStudioCss();
     syncInspectorNumbers();
+  }
+
+  /* 全局自定义 CSS + hover 样式注入（设计器实时预览） */
+  function applyStudioCss() {
+    let tag = document.getElementById("studio-css");
+    if (!tag) {
+      tag = document.createElement("style");
+      tag.id = "studio-css";
+      document.head.appendChild(tag);
+    }
+    let css = state.css || "";
+    state.elements.forEach(el => {
+      if (el.style && el.style.hoverCss) {
+        css += "\n#stage .el[data-id=\"" + el.id + "\"]:hover{" + el.style.hoverCss + "}";
+      }
+    });
+    tag.textContent = css;
   }
 
   function renderEl(el) {
     const d = document.createElement("div");
-    d.className = "el";
+    d.className = "el" + (el.cls ? " " + el.cls : "");
     d.dataset.id = el.id;
+    if (el.attrs) {
+      Object.keys(el.attrs).forEach(k => {
+        if (k && k !== "class" && k !== "style" && k !== "id" && k !== "data-id") {
+          d.setAttribute(k, el.attrs[k]);
+        }
+      });
+    }
     if (el.id === state.selectedId || state.sel.has(el.id)) d.classList.add("selected");
     if (el.locked) d.classList.add("locked");
     applyElStyle(d, el);
@@ -200,6 +230,7 @@
     d.style.fontFamily = el.style.fontFamily || "";
     const sh = { soft: "0 2px 12px rgba(0,0,0,.10)", medium: "0 4px 20px rgba(0,0,0,.18)", strong: "0 8px 30px rgba(0,0,0,.28)", glow: "0 0 18px rgba(90,140,255,.45)" }[el.style.shadow];
     d.style.boxShadow = sh || "none";
+    if (el.style.inlineCss) d.style.cssText += ";" + el.style.inlineCss;
   }
   function bgc(st) {
     return st.bgGradient || st.bgColor;
@@ -219,6 +250,7 @@
   /* 设计器内组件内部结构（可交互预览） */
   function elInnerHTML(el) {
     const p = el.props, st = el.style;
+    if (el.overrideHtml) return el.overrideHtml;   /* 用户自定义原始 HTML 覆盖内置渲染 */
     switch (el.type) {
       case "button":
         return '<button class="wuis-btn" style="background:' + bgc(st) + ';color:' + st.textColor
@@ -317,6 +349,8 @@
         return '<div class="wuis-modal">'
           + '<button class="wuis-btn" style="background:' + bgc(st) + ';color:' + st.textColor + ';font-size:' + st.fontSize + 'px;border-radius:' + st.radius + 'px;">' + esc(p.btnText || "打开弹窗") + '</button>'
           + '<div class="modal-mask" style="display:none;"><div class="modal-box"><b>' + esc(p.title || "弹窗标题") + '</b><span>' + esc(p.content || "") + '</span><button class="modal-close">关闭</button></div></div></div>';
+      case "custom":
+        return p.html || "";
     }
     return "";
   }
@@ -561,7 +595,7 @@
     h += '<div class="ip-head"><div class="ih-thumb">' + (ICON[el.type] || "") + '</div>'
       + '<div><div class="ih-name">' + t + '</div><div class="ih-type">' + el.id + '</div></div></div>';
 
-    h += '<div class="ip-group"><div class="ip-title">位置与尺寸</div>';
+    h += '<div class="ip-group"><div class="ip-title foldable">位置与尺寸</div>';
     h += numRow("X", "x", el.x, 0, 9999) + numRow("Y", "y", el.y, 0, 9999);
     h += numRow("宽度", "w", el.w, 12, 9999) + numRow("高度", "h", el.h, 12, 9999);
     h += '<div class="prop"><label></label><div class="btn-row">'
@@ -576,7 +610,7 @@
     h += contentRows(el);
     h += '</div>';
 
-    h += '<div class="ip-group"><div class="ip-title">外观</div>';
+    h += '<div class="ip-group"><div class="ip-title foldable">外观</div>';
     h += colorRow("背景色", "bgColor", st.bgColor);
     h += gradRow(st.bgGradient, st.bgColor);
     h += colorRow("文字色", "textColor", st.textColor);
@@ -601,7 +635,21 @@
       + iconOpt("cart", "购物车", st.icon) + iconOpt("bell", "铃铛", st.icon) + iconOpt("lock", "锁定", st.icon) + iconOpt("home", "主页", st.icon) + '</select></div>';
     h += '</div>';
 
-    h += '<div class="ip-group"><div class="ip-title">交互</div>';
+    h += '<div class="ip-group"><div class="ip-title foldable">自定义</div>';
+    h += '<div class="prop"><label>Class</label><input type="text" data-c="cls" placeholder="my-class other-class"></div>';
+    h += '<div class="prop"><label>内联样式</label><textarea rows="3" data-c="inlineCss" placeholder="padding:8px;margin:4px;cursor:pointer;"></textarea></div>';
+    h += '<div class="prop"><label>悬停样式</label><textarea rows="3" data-c="hoverCss" placeholder="鼠标悬停时的额外样式，如：&#10;background:#1a45cc;transform:scale(1.05);"></textarea></div>';
+    h += '<div class="prop"><label>HTML 属性</label><textarea rows="3" data-c="attrs" placeholder="每行一个：&#10;data-idx=1&#10;data-role=hero"></textarea></div>';
+    h += '<div class="prop"><label>覆盖 HTML</label><textarea rows="5" data-c="overrideHtml" placeholder="留空使用内置渲染；填写后替换组件内部 HTML（支持任意标签）"></textarea></div>';
+    if (el.type === "custom") {
+      h += '<div class="prop"><label>自定义 HTML</label><textarea rows="8" data-p="html" placeholder="在此编写组件原始 HTML"></textarea></div>';
+    }
+    h += '<div class="prop block"><label>CSS 预览</label><textarea class="css-preview" rows="4" readonly spellcheck="false" data-c="cssPreview"></textarea></div>';
+    h += '<div class="prop"><label></label><button class="btn-mini" data-icmd="copycss">复制样式代码</button></div>';
+    h += '<div class="prop"><label></label><span class="ip-hint">class / 属性 / 内联样式 / 悬停样式 / 覆盖 HTML 均会在导出 HTML 时保留；悬停样式自动生成 :hover 规则。</span></div>';
+    h += '</div>';
+
+    h += '<div class="ip-group"><div class="ip-title foldable">交互</div>';
     if (el.type === "switch" || el.type === "checkbox" || el.type === "radio" || el.type === "slider" || el.type === "progress") {
       h += colorRow("强调色", "accentColor", st.accentColor);
     }
@@ -704,6 +752,9 @@
         h += textRow("弹窗标题", "title", p.title);
         h += textAreaRow("弹窗内容", "content", p.content);
         break;
+      case "custom":
+        h += textAreaRow("自定义 HTML", "html", p.html);
+        break;
     }
     return h;
   }
@@ -751,6 +802,11 @@
 
   function bindInspector(el) {
     const ip = $("#inspector");
+    ip.querySelectorAll(".ip-title.foldable").forEach(t => {
+      t.addEventListener("click", () => {
+        t.parentElement.classList.toggle("folded");
+      });
+    });
     ip.querySelectorAll("input[type=number][data-s]").forEach(inp => {
       inp.addEventListener("change", () => {
         const key = inp.dataset.s;
@@ -862,6 +918,30 @@
         markDirty(true);
       });
     });
+    ip.querySelectorAll("[data-c]").forEach(c => {
+      c.addEventListener("change", () => {
+        const key = c.dataset.c;
+        if (key === "cls") el.cls = c.value.trim();
+        else if (key === "inlineCss") el.style.inlineCss = c.value;
+        else if (key === "hoverCss") el.style.hoverCss = c.value;
+        else if (key === "attrs") {
+          const attrs = {};
+          String(c.value || "").split("\n").forEach(line => {
+            line = line.trim();
+            if (!line) return;
+            const eq = line.indexOf("=");
+            if (eq > 0) attrs[line.slice(0, eq).trim()] = line.slice(eq + 1).trim();
+            else attrs[line] = "";
+          });
+          el.attrs = attrs;
+        }
+        else if (key === "overrideHtml") el.overrideHtml = c.value;
+        renderElementOnly(el);
+        if (key === "hoverCss") applyStudioCss();
+        renderInspector();
+        markDirty(true);
+      });
+    });
     ip.querySelectorAll("[data-icmd]").forEach(b => {
       b.addEventListener("click", () => {
         const cmd = b.dataset.icmd;
@@ -870,6 +950,14 @@
         else if (cmd === "top") zTop();
         else if (cmd === "bottom") zBottom();
         else if (cmd === "pickimg") pickImage(el);
+        else if (cmd === "copycss") {
+          const ta = ip.querySelector('[data-c="cssPreview"]');
+          if (ta) {
+            ta.select();
+            try { document.execCommand("copy"); toast("样式代码已复制"); }
+            catch (e) { toast("复制失败，请手动选择复制"); }
+          }
+        }
       });
     });
   }
@@ -880,6 +968,25 @@
     ip.querySelectorAll("input[type=number][data-p]").forEach(inp => { inp.value = el.props[inp.dataset.p]; });
     ip.querySelectorAll("input[type=text][data-p]").forEach(inp => { inp.value = el.props[inp.dataset.p] || ""; });
     ip.querySelectorAll("textarea[data-p]").forEach(ta => { ta.value = el.props[ta.dataset.p] || ""; });
+    ip.querySelectorAll("[data-c]").forEach(c => {
+      if (c.dataset.c === "cls") c.value = el.cls || "";
+      else if (c.dataset.c === "inlineCss") c.value = el.style.inlineCss || "";
+      else if (c.dataset.c === "hoverCss") c.value = el.style.hoverCss || "";
+      else if (c.dataset.c === "attrs") {
+        c.value = Object.keys(el.attrs || {}).map(k => k + "=" + el.attrs[k]).join("\n");
+      }
+      else if (c.dataset.c === "overrideHtml") c.value = el.overrideHtml || "";
+      else if (c.dataset.c === "cssPreview") {
+        const st = el.style || {};
+        let css = "left:" + el.x + "px; top:" + el.y + "px;\n"
+          + "width:" + el.w + "px; height:" + el.h + "px;\n"
+          + "opacity:" + (st.opacity || 1) + "; z-index:" + (st.z || 1) + ";\n"
+          + "transform:rotate(" + (st.rotate || 0) + "deg);";
+        if (st.inlineCss) css += "\n" + st.inlineCss;
+        if (st.hoverCss) css += "\n:hover {\n  " + st.hoverCss + "\n}";
+        c.value = css;
+      }
+    });
     ip.querySelectorAll("select[data-p]").forEach(s => { s.value = el.props[s.dataset.p]; });
     ip.querySelectorAll("input[type=checkbox][data-s]").forEach(cb => {
       if (cb.dataset.s === "bold") cb.checked = !!el.style.bold;
@@ -1046,7 +1153,8 @@
       { type: "tabs", name: "选项卡" }, { type: "card", name: "卡片" },
       { type: "chart", name: "图表" }, { type: "table", name: "表格" },
       { type: "video", name: "视频" }, { type: "date", name: "日期" },
-      { type: "modal", name: "弹窗" }
+      { type: "modal", name: "弹窗" },
+      { type: "custom", name: "自定义 HTML", wide: true }
     ];
     grid.innerHTML = "";
     PALETTE.forEach(it => {
@@ -1123,6 +1231,11 @@
       state.stage.grid = $("#cv-grid").checked;
       renderStage(); markDirty(true);
     });
+    $("#cv-css").addEventListener("input", () => {
+      state.css = $("#cv-css").value;
+      applyStudioCss();
+    });
+    $("#cv-css").addEventListener("change", () => { markDirty(true); });
   }
   function syncCanvasPanel() {
     $("#cv-w").value = state.stage.w;
@@ -1130,6 +1243,7 @@
     $("#cv-bg").value = state.stage.bg;
     $("#cv-bg-hex").value = state.stage.bg;
     $("#cv-grid").checked = state.stage.grid;
+    $("#cv-css").value = state.css || "";
   }
 
   /* ---------- 缩放 ---------- */
@@ -1231,7 +1345,7 @@
   function showAbout() {
     modal("关于 WebUI Studio",
       '<div style="text-align:center;padding:6px 0 2px;">'
-      + '<div style="font-size:20px;font-weight:700;color:#d7dbe1;">WebUI Studio v1.0.0</div>'
+      + '<div style="font-size:20px;font-weight:700;color:#d7dbe1;">WebUI Studio v1.2.0</div>'
       + '<div style="color:#8a8f98;margin-top:6px;">网页 UI 制作软件 · 拖拽式可视化设计</div>'
       + '<div style="color:#6b7180;margin-top:4px;">PySide6 + QWebEngineView</div>'
       + '</div>');

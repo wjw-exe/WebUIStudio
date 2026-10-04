@@ -300,24 +300,32 @@ body {
   font-size: 10.5px; font-weight: 600; color: var(--text-3); letter-spacing: .7px;
   text-transform: uppercase; padding: 10px 2px 6px; border-bottom: 1px solid var(--line); margin-bottom: 8px;
 }
+.ip-title.foldable { cursor: pointer; user-select: none; }
+.ip-title.foldable::before { content: "▾"; margin-right: 5px; font-size: 9px; opacity: .75; transition: transform .12s; }
+.ip-group.folded .ip-title.foldable::before { transform: rotate(-90deg); }
+.ip-group.folded .prop, .ip-group.folded .ip-hint { display: none; }
 .ip-title .del-btn { color: var(--danger); cursor: pointer; font-size: 10.5px; font-weight: 400; text-transform: none; letter-spacing: 0; }
 .ip-title .del-btn:hover { text-decoration: underline; }
 
 .prop { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
 .prop > label { flex-shrink: 0; width: 52px; font-size: 11.5px; color: var(--text-2); }
+.prop.block { flex-wrap: wrap; }
+.prop.block > label { width: 100%; }
+.prop.block textarea { width: 100%; flex: 1 1 100%; }
 .prop input[type=number], .prop input[type=text], .prop select, .prop textarea {
   flex: 1; min-width: 0; height: 26px; padding: 0 7px;
   background: var(--panel-2); color: var(--text); border: 1px solid var(--line); border-radius: 4px;
-  font-size: 12px; font-family: var(--font); outline: none;
+  font-size: 12px; font-family: var(--font); outline: none; transition: border-color .12s, box-shadow .12s;
 }
-.prop input:focus, .prop select:focus, .prop textarea:focus { border-color: var(--accent); }
+.prop input:focus, .prop select:focus, .prop textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(63,140,255,.15); }
 .prop input[type=color] { width: 28px; height: 26px; padding: 2px; background: var(--panel-2); border: 1px solid var(--line); border-radius: 4px; cursor: pointer; flex-shrink: 0; }
 .prop .hex { width: 60px; font-variant-numeric: tabular-nums; }
 .prop input[type=range] { flex: 1; accent-color: var(--accent); height: 4px; }
 .prop .range-val { width: 32px; text-align: right; font-size: 11px; color: var(--text-3); font-variant-numeric: tabular-nums; }
-.prop textarea { height: 50px; resize: vertical; line-height: 1.5; }
+.prop textarea { height: 50px; resize: vertical; line-height: 1.5; padding-top: 5px; font-family: Consolas, "Courier New", monospace; font-size: 11.5px; }
 .prop .chk { width: 15px; height: 15px; accent-color: var(--accent); cursor: pointer; }
 .prop .btn-row { display: flex; gap: 5px; flex: 1; }
+.prop .css-preview { background: #10141d; color: #a9c2ff; border-color: rgba(63,140,255,.25); height: 84px; white-space: pre; }
 .prop .btn-mini { flex: 1; height: 26px; background: var(--panel-2); color: var(--text-2); border: 1px solid var(--line); border-radius: 4px; font-size: 11.5px; cursor: pointer; }
 .prop .btn-mini:hover { border-color: var(--accent); color: var(--text); }
 .prop .btn-mini.primary { background: var(--accent-soft); border-color: transparent; color: #8ab0ff; }
