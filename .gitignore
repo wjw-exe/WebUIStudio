@@ -9,3 +9,5 @@ dist/
 # 构建日志
 build_out.txt
 build_err.txt
+
+build_*.log
