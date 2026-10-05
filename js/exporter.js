@@ -13,6 +13,10 @@ const WUIS_EXPORTER = (function () {
       .replace(/"/g, "&quot;");
   }
 
+  function bgc(st) {
+    return st.bgGradient || st.bgColor || "";
+  }
+
   const PALETTE = ["#4f8cff", "#29c4a9", "#ff9f43", "#f5576c", "#8e5cf7", "#f7b731", "#2dd4bf", "#a78bfa"];
 
   /* 图标（按钮/徽章/文字前缀） */
@@ -249,6 +253,48 @@ const WUIS_EXPORTER = (function () {
         return '<div class="wuis-notice" style="background:' + t.bg + ";border-left:3px solid " + t.fg + ";border-radius:" + st.radius + "px;" + fontF + '">'
           + '<span class="wnt-label" style="background:' + t.fg + ';">' + t.label + '</span>'
           + '<span class="wnt-text" style="color:' + t.fg + ";font-size:" + st.fontSize + 'px;">' + esc(p.text || "") + '</span></div>';
+      }
+      case "accordion": {
+        const rows = String(p.items || "").split("\n").map(s => s.trim()).filter(Boolean).map(s => {
+          const i = s.indexOf("|");
+          return i > -1 ? { t: s.slice(0, i).trim(), d: s.slice(i + 1).trim() } : { t: s, d: "" };
+        });
+        const act = Math.max(0, Math.min(rows.length - 1, Number(p.active) || 0));
+        const col = st.accentColor || "#2f5cff";
+        return '<div class="wuis-accordion" style="border-radius:' + st.radius + "px;border:1px solid " + st.borderColor + ";font-size:" + st.fontSize + "px;" + fontF + '">'
+          + rows.map((r, i) => '<div class="wacc-item' + (i === act ? " open" : "") + '"><div class="wacc-head" style="color:' + (i === act ? col : st.textColor) + ';"><span>' + esc(r.t) + '</span><span class="wacc-arrow">' + (i === act ? "−" : "+") + '</span></div>'
+            + '<div class="wacc-body" style="' + (i === act ? "" : "display:none;") + '">' + esc(r.d || "") + '</div></div>').join("")
+          + '</div>';
+      }
+      case "quote": {
+        return '<div class="wuis-quote" style="border-left:4px solid ' + st.accentColor + ";background:" + bgc(st) + ";border-radius:0 " + st.radius + "px " + st.radius + "px 0;color:" + st.textColor + ";font-size:" + st.fontSize + "px;" + fontF + '">'
+          + '<div class="wq-mark" style="color:' + st.accentColor + ';">“</div>'
+          + '<div class="wq-text">' + esc(p.text || "") + '</div>'
+          + (p.author ? '<div class="wq-author" style="opacity:.65;">' + esc(p.author) + '</div>' : '') + '</div>';
+      }
+      case "code": {
+        return '<div class="wuis-code" style="border-radius:' + st.radius + "px;font-size:" + Math.max(11, st.fontSize - 2) + "px;" + fontF + '">'
+          + '<div class="wc-head"><span class="wc-dots"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i></span><span class="wc-lang">' + esc(p.lang || "") + '</span></div>'
+          + '<pre class="wc-pre"><code>' + esc(p.code || "") + '</code></pre></div>';
+      }
+      case "qrcode": {
+        const qs = Math.max(48, Math.min(320, Number(p.size) || 180));
+        const tgt = encodeURIComponent(p.text || "https://example.com");
+        const url = "https://api.qrserver.com/v1/create-qr-code/?size=" + Math.round(qs * 2) + "x" + Math.round(qs * 2) + "&data=" + tgt;
+        return '<div class="wuis-qrcode" style="width:' + qs + "px;height:" + qs + "px;border-radius:" + Math.max(4, st.radius) + "px;border:1px solid " + st.borderColor + ";" + fontF + '">'
+          + '<img src="' + url + '" alt="二维码" style="width:100%;height:100%;object-fit:contain;">'
+          + '<span class="wqr-cap" style="color:' + st.textColor + ";font-size:" + Math.max(9, st.fontSize - 5) + 'px;">' + esc(p.text || "") + '</span></div>';
+      }
+      case "tags": {
+        const items = String(p.items || "").split(",").map(s => s.trim()).filter(Boolean);
+        const tones = {
+          blue: { bg: "#e8f1ff", fg: "#1f6bff" }, green: { bg: "#e6f9ef", fg: "#12a05c" },
+          orange: { bg: "#fff5e0", fg: "#c77a00" }, red: { bg: "#ffecec", fg: "#d93a3a" }, gray: { bg: "#f1f3f6", fg: "#5b6472" }
+        };
+        const t = tones[p.tone] || tones.blue;
+        return '<div class="wuis-tags" style="font-size:' + st.fontSize + "px;" + fontF + '">'
+          + items.map(x => '<span class="wtg-item" style="background:' + t.bg + ";color:" + t.fg + ";border-radius:" + Math.max(2, Math.round(st.radius / 2)) + 'px;">' + esc(x) + '</span>').join("")
+          + '</div>';
       }
       case "custom": {
         return p.html || "";
@@ -497,7 +543,28 @@ body{min-height:100vh;background:#eef0f4;font-family:"Segoe UI","Microsoft YaHei
 .wuis-sidebar .wsb-item:hover{filter:brightness(.97)}
 .wuis-notice{width:100%;height:100%;display:flex;align-items:center;gap:10px;padding:0 14px;box-sizing:border-box;overflow:hidden}
 .wuis-notice .wnt-label{flex-shrink:0;color:#fff;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;letter-spacing:.5px}
-.wuis-notice .wnt-text{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}`;
+.wuis-notice .wnt-text{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wuis-accordion{width:100%;height:100%;display:flex;flex-direction:column;gap:0;overflow:hidden;background:#fff}
+.wuis-accordion .wacc-item{border-bottom:1px solid rgba(0,0,0,.06)}
+.wuis-accordion .wacc-item:last-child{border-bottom:none}
+.wuis-accordion .wacc-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:11px 14px;cursor:pointer;font-weight:600;user-select:none}
+.wuis-accordion .wacc-arrow{font-size:15px;line-height:1;opacity:.75}
+.wuis-accordion .wacc-body{padding:2px 14px 12px;line-height:1.6;color:#555}
+.wuis-quote{width:100%;height:100%;display:flex;flex-direction:column;gap:4px;padding:12px 14px;box-sizing:border-box;overflow:hidden}
+.wuis-quote .wq-mark{font-size:26px;line-height:1;font-family:Georgia,serif;margin-bottom:-6px}
+.wuis-quote .wq-text{flex:1;overflow:auto;line-height:1.6;padding-left:4px}
+.wuis-quote .wq-author{font-size:11px;text-align:right;padding-right:6px}
+.wuis-code{width:100%;height:100%;display:flex;flex-direction:column;overflow:hidden;background:#0f172a;color:#e2e8f0}
+.wuis-code .wc-head{display:flex;align-items:center;gap:8px;padding:8px 12px;background:#1e293b;flex-shrink:0}
+.wuis-code .wc-dots{display:flex;gap:6px}
+.wuis-code .wc-dots i{width:11px;height:11px;border-radius:50%;display:inline-block}
+.wuis-code .wc-lang{margin-left:auto;font-size:11px;opacity:.6;white-space:nowrap}
+.wuis-code .wc-pre{flex:1;overflow:auto;margin:0;padding:12px 14px;font-family:Consolas,Menlo,monospace;font-size:12.5px;line-height:1.55;white-space:pre-wrap;word-break:break-all}
+.wuis-qrcode{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:8px;box-sizing:border-box;background:#fff;overflow:hidden}
+.wuis-qrcode img{display:block;flex-shrink:0}
+.wuis-qrcode .wqr-cap{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.wuis-tags{width:100%;height:100%;display:flex;flex-wrap:wrap;align-items:center;gap:8px;overflow:hidden}
+.wuis-tags .wtg-item{padding:3px 10px;font-size:12.5px;white-space:nowrap}`;
 
   const RUNTIME = `(function(){
 function $$(s,c){return Array.prototype.slice.call((c||document).querySelectorAll(s));}
@@ -577,6 +644,23 @@ $$('.wuis-carousel').forEach(function(cr){
     if(iv>0)timer=setInterval(function(){go(idx+1);},iv*1000);
   }
   restart();
+});
+$$('.wuis-accordion').forEach(function(acc){
+  $$('.wacc-head',acc).forEach(function(h){
+    h.addEventListener('click',function(){
+      var item=h.closest('.wacc-item');var isOpen=item.classList.contains('open');
+      $$('.wacc-item',acc).forEach(function(x){
+        x.classList.remove('open');
+        var b=x.querySelector('.wacc-body');if(b)b.style.display='none';
+        var ar=x.querySelector('.wacc-arrow');if(ar)ar.textContent='+';
+      });
+      if(!isOpen){
+        item.classList.add('open');
+        var b=item.querySelector('.wacc-body');if(b)b.style.display='';
+        var ar=item.querySelector('.wacc-arrow');if(ar)ar.textContent='−';
+      }
+    });
+  });
 });
 document.addEventListener('DOMContentLoaded',function(){fit();replay(PAGES[0]);});
 if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',fit);}else{fit();replay(PAGES[0]);}

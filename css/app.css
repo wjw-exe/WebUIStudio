@@ -679,6 +679,27 @@ body {
 .wuis-notice{width:100%;height:100%;display:flex;align-items:center;gap:10px;padding:0 14px;box-sizing:border-box;overflow:hidden}
 .wuis-notice .wnt-label{flex-shrink:0;color:#fff;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;letter-spacing:.5px}
 .wuis-notice .wnt-text{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wuis-accordion{width:100%;height:100%;display:flex;flex-direction:column;gap:0;overflow:hidden;background:#fff}
+.wuis-accordion .wacc-item{border-bottom:1px solid rgba(0,0,0,.06)}
+.wuis-accordion .wacc-item:last-child{border-bottom:none}
+.wuis-accordion .wacc-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:11px 14px;cursor:pointer;font-weight:600;user-select:none}
+.wuis-accordion .wacc-arrow{font-size:15px;line-height:1;opacity:.75}
+.wuis-accordion .wacc-body{padding:2px 14px 12px;line-height:1.6;color:#555}
+.wuis-quote{width:100%;height:100%;display:flex;flex-direction:column;gap:4px;padding:12px 14px;box-sizing:border-box;overflow:hidden}
+.wuis-quote .wq-mark{font-size:26px;line-height:1;font-family:Georgia,serif;margin-bottom:-6px}
+.wuis-quote .wq-text{flex:1;overflow:auto;line-height:1.6;padding-left:4px}
+.wuis-quote .wq-author{font-size:11px;text-align:right;padding-right:6px}
+.wuis-code{width:100%;height:100%;display:flex;flex-direction:column;overflow:hidden;background:#0f172a;color:#e2e8f0}
+.wuis-code .wc-head{display:flex;align-items:center;gap:8px;padding:8px 12px;background:#1e293b;flex-shrink:0}
+.wuis-code .wc-dots{display:flex;gap:6px}
+.wuis-code .wc-dots i{width:11px;height:11px;border-radius:50%;display:inline-block}
+.wuis-code .wc-lang{margin-left:auto;font-size:11px;opacity:.6;white-space:nowrap}
+.wuis-code .wc-pre{flex:1;overflow:auto;margin:0;padding:12px 14px;font-family:Consolas,Menlo,monospace;font-size:12.5px;line-height:1.55;white-space:pre-wrap;word-break:break-all}
+.wuis-qrcode{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:8px;box-sizing:border-box;background:#fff;overflow:hidden}
+.wuis-qrcode img{display:block;flex-shrink:0}
+.wuis-qrcode .wqr-cap{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.wuis-tags{width:100%;height:100%;display:flex;flex-wrap:wrap;align-items:center;gap:8px;overflow:hidden}
+.wuis-tags .wtg-item{padding:3px 10px;font-size:12.5px;white-space:nowrap}
 #stage:not(.paint-mode) .el .wuis-steps,
 #stage:not(.paint-mode) .el .wuis-timeline,
 #stage:not(.paint-mode) .el .wuis-footer,
@@ -688,4 +709,6 @@ body {
 #stage:not(.paint-mode) .el .wuis-crumb .wcr-item,
 #stage:not(.paint-mode) .el .wuis-price .wpr-btn,
 #stage:not(.paint-mode) .el .wuis-stat,
-#stage:not(.paint-mode) .el .wuis-notice{pointer-events:none}
+#stage:not(.paint-mode) .el .wuis-notice,
+#stage:not(.paint-mode) .el .wuis-accordion .wacc-body,
+#stage:not(.paint-mode) .el .wuis-code .wc-pre{pointer-events:none}

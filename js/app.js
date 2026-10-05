@@ -45,7 +45,12 @@
     stat: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#5b8cff" stroke-width="1.7"><path d="M4 20V10M9.5 20V5M15 20v-7M20.5 20V8" stroke-linecap="round"/><path d="m4 10 5.5-5 5.5 7 5.5-4" opacity=".5" stroke-linejoin="round"/></svg>',
     price: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#5b8cff" stroke-width="1.7"><path d="M3 7h18v10H3Z" rx="3"/><text x="12" y="14.5" text-anchor="middle" font-size="9" fill="#5b8cff" stroke="none" font-weight="700">¥</text></svg>',
     sidebar: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#5b8cff" stroke-width="1.7"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9 4v16" opacity=".4"/><path d="M12 9h7M12 12.5h7M12 16h4" stroke-linecap="round"/></svg>',
-    notice: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#5b8cff" stroke-width="1.7"><path d="M6 9a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6"/><path d="M10 19a2 2 0 0 0 4 0"/><path d="M13 5.5V3M16 4l-1.5 1.5" opacity=".5"/></svg>'
+    notice: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#5b8cff" stroke-width="1.7"><path d="M6 9a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6"/><path d="M10 19a2 2 0 0 0 4 0"/><path d="M13 5.5V3M16 4l-1.5 1.5" opacity=".5"/></svg>',
+    accordion: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#5b8cff" stroke-width="1.7" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 9h18M3 14h18" opacity=".45"/><path d="M8 11.5 10.5 9 13 11.5M8 16.5 10.5 14l2.5 2.5" opacity=".7"/></svg>',
+    quote: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#5b8cff" stroke-width="1.7" stroke-linejoin="round"><path d="M5 5h6v6H5Z" opacity=".5"/><path d="M13 13h6v6h-6Z"/><path d="M5 14h4v5H5Z" opacity=".7"/></svg>',
+    code: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#5b8cff" stroke-width="1.7" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="m9.5 9-3 3 3 3M14.5 9l3 3-3 3" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    qrcode: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#5b8cff" stroke-width="1.7" stroke-linejoin="round"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><path d="M14 14h2v2M20 14v3M14 20h3" stroke-linecap="round"/></svg>',
+    tags: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#5b8cff" stroke-width="1.7" stroke-linejoin="round"><path d="M12 4 21 8l-9 4-9-4Z"/><path d="m5 12-1 6 8 2 8-2-1-6" opacity=".7"/></svg>'
   };
 
   const TYPE_NAMES = {
@@ -56,7 +61,8 @@
     custom: "自定义 HTML",
     list: "列表", rating: "评分", search: "搜索框", navbar: "导航栏",
     steps: "步骤条", timeline: "时间线", footer: "页脚", avatar: "头像",
-    carousel: "轮播图", breadcrumb: "面包屑", stat: "统计数字", price: "价格卡", sidebar: "侧边菜单", notice: "通知条"
+    carousel: "轮播图", breadcrumb: "面包屑", stat: "统计数字", price: "价格卡", sidebar: "侧边菜单", notice: "通知条",
+    accordion: "手风琴", quote: "引用块", code: "代码块", qrcode: "二维码", tags: "标签组"
   };
 
   const DEFAULT_STYLE = () => ({
@@ -101,11 +107,16 @@
     stat: () => ({ value: "12,345", label: "累计用户", prefix: "", suffix: "", icon: "user" }),
     price: () => ({ title: "专业版", price: "99", period: "/月", desc: "适合进阶用户，含全部高级功能与专属支持。", btnText: "立即订阅", featured: false }),
     sidebar: () => ({ brand: "WebUI", items: "仪表盘,数据分析,用户管理,系统设置" }),
-    notice: () => ({ text: "系统将于今晚 23:00 进行维护，请提前保存数据。", tone: "info" })
+    notice: () => ({ text: "系统将于今晚 23:00 进行维护，请提前保存数据。", tone: "info" }),
+    accordion: () => ({ items: "什么是 WebUI Studio？|一款拖拽式网页 UI 设计器，支持自由布局与一键导出 HTML。\n支持哪些导出方式？|可导出独立单文件 HTML，离线也能打开使用。", active: 0 }),
+    quote: () => ({ text: "设计是解决问题的过程，而非装饰。", author: "— 佚名" }),
+    code: () => ({ code: "console.log('Hello WebUI Studio!');", lang: "javascript" }),
+    qrcode: () => ({ text: "https://github.com/wjw-exe/WebUIStudio", size: 180 }),
+    tags: () => ({ items: "设计,开发,高效", tone: "blue" })
   };
 
-  const DEF_W = { button: 150, text: 180, switch: 90, input: 220, slider: 240, select: 180, checkbox: 140, radio: 140, image: 200, progress: 260, divider: 220, container: 320, badge: 70, tabs: 260, card: 260, chart: 360, table: 340, video: 360, date: 200, modal: 200, custom: 240, list: 220, rating: 180, search: 280, navbar: 600, steps: 380, timeline: 260, footer: 600, avatar: 56, carousel: 560, breadcrumb: 320, stat: 220, price: 240, sidebar: 240, notice: 640 };
-  const DEF_H = { button: 44, text: 32, switch: 34, input: 40, slider: 34, select: 40, checkbox: 30, radio: 30, image: 140, progress: 30, divider: 24, container: 200, badge: 28, tabs: 120, card: 180, chart: 200, table: 160, video: 200, date: 40, modal: 44, custom: 120, list: 150, rating: 36, search: 40, navbar: 48, steps: 52, timeline: 170, footer: 56, avatar: 56, carousel: 220, breadcrumb: 36, stat: 88, price: 260, sidebar: 360, notice: 44 };
+  const DEF_W = { button: 150, text: 180, switch: 90, input: 220, slider: 240, select: 180, checkbox: 140, radio: 140, image: 200, progress: 260, divider: 220, container: 320, badge: 70, tabs: 260, card: 260, chart: 360, table: 340, video: 360, date: 200, modal: 200, custom: 240, list: 220, rating: 180, search: 280, navbar: 600, steps: 380, timeline: 260, footer: 600, avatar: 56, carousel: 560, breadcrumb: 320, stat: 220, price: 240, sidebar: 240, notice: 640, accordion: 300, quote: 320, code: 380, qrcode: 180, tags: 260 };
+  const DEF_H = { button: 44, text: 32, switch: 34, input: 40, slider: 34, select: 40, checkbox: 30, radio: 30, image: 140, progress: 30, divider: 24, container: 200, badge: 28, tabs: 120, card: 180, chart: 200, table: 160, video: 200, date: 40, modal: 44, custom: 120, list: 150, rating: 36, search: 40, navbar: 48, steps: 52, timeline: 170, footer: 56, avatar: 56, carousel: 220, breadcrumb: 36, stat: 88, price: 260, sidebar: 360, notice: 44, accordion: 220, quote: 88, code: 160, qrcode: 180, tags: 36 };
 
   /* ---------- 状态 ---------- */
   const state = {
@@ -557,6 +568,49 @@
           + '<span class="wnt-label" style="background:' + t.fg + ';">' + t.label + '</span>'
           + '<span class="wnt-text" style="color:' + t.fg + ';font-size:' + st.fontSize + 'px;">' + esc(p.text || "") + '</span></div>';
       }
+      case "accordion": {
+        const rows = String(p.items || "").split("\n").map(s => s.trim()).filter(Boolean).map(s => {
+          const i = s.indexOf("|");
+          return i > -1 ? { t: s.slice(0, i).trim(), d: s.slice(i + 1).trim() } : { t: s, d: "" };
+        });
+        const act = Math.max(0, Math.min(rows.length - 1, Number(p.active) || 0));
+        const col = st.accentColor || "#2f5cff";
+        return '<div class="wuis-accordion" style="border-radius:' + st.radius + 'px;border:1px solid ' + st.borderColor + ';font-size:' + st.fontSize + 'px;">'
+          + rows.map((r, i) => '<div class="wacc-item' + (i === act ? " open" : "") + '" data-open="' + (i === act ? "1" : "0") + '">'
+            + '<div class="wacc-head" style="color:' + (i === act ? col : st.textColor) + ';"><span>' + esc(r.t) + '</span><span class="wacc-arrow">' + (i === act ? "−" : "+") + '</span></div>'
+            + '<div class="wacc-body" style="' + (i === act ? "" : "display:none;") + '">' + esc(r.d || "") + '</div></div>').join("")
+          + '</div>';
+      }
+      case "quote": {
+        return '<div class="wuis-quote" style="border-left:4px solid ' + st.accentColor + ';background:' + bgc(st) + ';border-radius:0 ' + st.radius + 'px ' + st.radius + 'px 0;color:' + st.textColor + ';font-size:' + st.fontSize + 'px;">'
+          + '<div class="wq-mark" style="color:' + st.accentColor + ';">“</div>'
+          + '<div class="wq-text">' + esc(p.text || "") + '</div>'
+          + (p.author ? '<div class="wq-author" style="opacity:.65;">' + esc(p.author) + '</div>' : '') + '</div>';
+      }
+      case "code": {
+        return '<div class="wuis-code" style="border-radius:' + st.radius + 'px;font-size:' + Math.max(11, st.fontSize - 2) + 'px;">'
+          + '<div class="wc-head"><span class="wc-dots"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i></span><span class="wc-lang">' + esc(p.lang || "") + '</span></div>'
+          + '<pre class="wc-pre"><code>' + esc(p.code || "") + '</code></pre></div>';
+      }
+      case "qrcode": {
+        const qs = Math.max(48, Math.min(320, Number(p.size) || 180));
+        const tgt = encodeURIComponent(p.text || "https://example.com");
+        const url = "https://api.qrserver.com/v1/create-qr-code/?size=" + Math.round(qs * 2) + "x" + Math.round(qs * 2) + "&data=" + tgt;
+        return '<div class="wuis-qrcode" style="width:' + qs + 'px;height:' + qs + 'px;border-radius:' + Math.max(4, st.radius) + 'px;border:1px solid ' + st.borderColor + ';">'
+          + '<img src="' + url + '" alt="二维码" style="width:100%;height:100%;object-fit:contain;">'
+          + '<span class="wqr-cap" style="color:' + st.textColor + ';font-size:' + Math.max(9, st.fontSize - 5) + 'px;">' + esc(p.text || "") + '</span></div>';
+      }
+      case "tags": {
+        const items = String(p.items || "").split(",").map(s => s.trim()).filter(Boolean);
+        const tones = {
+          blue: { bg: "#e8f1ff", fg: "#1f6bff" }, green: { bg: "#e6f9ef", fg: "#12a05c" },
+          orange: { bg: "#fff5e0", fg: "#c77a00" }, red: { bg: "#ffecec", fg: "#d93a3a" }, gray: { bg: "#f1f3f6", fg: "#5b6472" }
+        };
+        const t = tones[p.tone] || tones.blue;
+        return '<div class="wuis-tags" style="font-size:' + st.fontSize + 'px;">'
+          + items.map(x => '<span class="wtg-item" style="background:' + t.bg + ';color:' + t.fg + ';border-radius:' + Math.max(2, Math.round(st.radius / 2)) + 'px;">' + esc(x) + '</span>').join("")
+          + '</div>';
+      }
     }
     return "";
   }
@@ -657,6 +711,35 @@
       e.stopPropagation();
       startTextEdit(d, el, t);
     });
+
+    const acc = d.querySelector(".wuis-accordion");
+    if (acc) {
+      acc.querySelectorAll(".wacc-head").forEach(h => {
+        h.addEventListener("mousedown", e => e.stopPropagation());
+        h.addEventListener("click", e => {
+          if (el.locked) return;
+          e.stopPropagation();
+          const item = h.closest(".wacc-item");
+          const isOpen = item.classList.contains("open");
+          acc.querySelectorAll(".wacc-item").forEach(x => {
+            x.classList.remove("open");
+            const b = x.querySelector(".wacc-body");
+            if (b) b.style.display = "none";
+            const ar = x.querySelector(".wacc-arrow");
+            if (ar) ar.textContent = "+";
+          });
+          if (!isOpen) {
+            item.classList.add("open");
+            const b = item.querySelector(".wacc-body");
+            if (b) b.style.display = "";
+            const ar = item.querySelector(".wacc-arrow");
+            if (ar) ar.textContent = "−";
+          }
+          markDirty(false);
+          selectEl(el.id);
+        });
+      });
+    }
 
     const mbtn = d.querySelector(".wuis-modal .wuis-btn");
     if (mbtn) mbtn.addEventListener("click", e => {
@@ -1081,6 +1164,28 @@
         h += textAreaRow("通知文字", "text", p.text);
         h += '<div class="prop"><label>色调</label><select data-p="tone">'
           + opt("info", "信息", p.tone) + opt("success", "成功", p.tone) + opt("warn", "提醒", p.tone) + opt("danger", "警告", p.tone)
+          + '</select></div>';
+        break;
+      case "accordion":
+        h += textAreaRow("条目（每行：标题|内容）", "items", p.items);
+        h += numRowP("默认展开项", "active", p.active, 0, 100);
+        break;
+      case "quote":
+        h += textAreaRow("引用内容", "text", p.text);
+        h += textRow("来源", "author", p.author);
+        break;
+      case "code":
+        h += textAreaRow("代码内容", "code", p.code);
+        h += textRow("语言标签", "lang", p.lang);
+        break;
+      case "qrcode":
+        h += textRow("二维码内容", "text", p.text);
+        h += numRowP("尺寸（px）", "size", p.size, 48, 320);
+        break;
+      case "tags":
+        h += textRow("标签（逗号分隔）", "items", p.items);
+        h += '<div class="prop"><label>色调</label><select data-p="tone">'
+          + opt("blue", "蓝", p.tone) + opt("green", "绿", p.tone) + opt("orange", "橙", p.tone) + opt("red", "红", p.tone) + opt("gray", "灰", p.tone)
           + '</select></div>';
         break;
     }
@@ -1671,6 +1776,9 @@
       { type: "carousel", name: "轮播图", wide: true }, { type: "breadcrumb", name: "面包屑" },
       { type: "stat", name: "统计数字" }, { type: "price", name: "价格卡" },
       { type: "sidebar", name: "侧边菜单" }, { type: "notice", name: "通知条", wide: true },
+      { type: "accordion", name: "手风琴", wide: true }, { type: "quote", name: "引用块", wide: true },
+      { type: "code", name: "代码块", wide: true }, { type: "qrcode", name: "二维码" },
+      { type: "tags", name: "标签组" },
       { type: "custom", name: "自定义 HTML", wide: true }
     ];
     grid.innerHTML = "";
@@ -1744,7 +1852,8 @@
       { name: "数据页", icon: "▥", fn: buildTplData },
       { name: "着陆页", icon: "▸", fn: buildTplLanding },
       { name: "看板页", icon: "▦", fn: buildTplDashboard },
-      { name: "电商页", icon: "▧", fn: buildTplShop }
+      { name: "电商页", icon: "▧", fn: buildTplShop },
+      { name: "个人页", icon: "▩", fn: buildTplProfile }
     ];
     TPL.forEach(t => {
       const b = document.createElement("button");
@@ -1829,6 +1938,18 @@
     tplAdd("price", 380, 500, { w: 240, h: 240, props: { title: "旗舰版", price: "199", featured: true } });
     tplAdd("price", 660, 500, { w: 240, h: 240 });
     renderStage(); renderLayers(); updateCount(); toast("已插入模板「电商页」"); pushHistory();
+  }
+  function buildTplProfile() {
+    tplAdd("avatar", 80, 70, { w: 120, h: 120, props: { text: "M", shape: "circle" } });
+    tplAdd("text", 250, 86, { text: "你好，我是 Marvis", fontSize: 30, bold: true, w: 400, h: 46 });
+    tplAdd("text", 252, 140, { text: "全栈开发者 · UI 设计工具作者 · 开源爱好者", w: 460, h: 36, color: "#666666" });
+    tplAdd("tags", 252, 190, { w: 300, h: 30, props: { items: "WebUI Studio,Python,开源" } });
+    tplAdd("button", 80, 300, { text: "查看作品集", w: 150 });
+    tplAdd("button", 250, 300, { text: "联系我", w: 130 });
+    tplAdd("quote", 80, 390, { w: 520, h: 96, props: { text: "代码与设计的边界，是我每天跨越的地方。", author: "— Marvis" } });
+    tplAdd("accordion", 660, 70, { w: 480, h: 260, props: { items: "我做过什么？|WebUI Studio 网页设计器，拖拽式构建 HTML 页面并一键导出。\n最近在忙什么？|迭代 v1.7，为设计器增加更多实用组件与模板。" } });
+    tplAdd("qrcode", 660, 360, { w: 140, h: 140, props: { text: "https://github.com/wjw-exe/WebUIStudio", size: 120 } });
+    renderStage(); renderLayers(); updateCount(); toast("已插入模板「个人页」"); pushHistory();
   }
 
   /* ---------- 画布设置 ---------- */
